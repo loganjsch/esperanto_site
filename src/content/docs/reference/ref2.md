@@ -3,9 +3,4 @@ title: Maintaining Security
 description: A reference page in my new Starlight docs site.
 ---
 
-Reference pages are ideal for outlining how things work in terse and clear terms.
-Less concerned with telling a story or addressing a specific use case, they should give a comprehensive outline of what you're documenting.
-
-## Further reading
-
-- Read [about reference](https://diataxis.fr/reference/) in the Diátaxis framework
+The content shared on this site is early stage - the demo doesn't even use HTTPS (omg). This site specifies the proof of concept and usage and not something that remotely resembles production ready.

@@ -1,13 +1,68 @@
 ---
-title: Esperrrraaaanto
+title: Esperanto
 description: Esperanto Docs.
 template: splash
 hero:
-  tagline: Hardware-Rooted Trust Simplified for Any Scale
+  tagline: Platform Trust for Any Scale
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: Overview
+    - text: Docs
       link: /esperanto_overview
       icon: right-arrow
 ---
+
+## The Scenario…
+
+You need to provision secrets or process sensitive data across clouds and edge.
+
+But before you can, you have to **trust the platform your code is running on**.
+
+But each environment has its own attestation scheme:  
+AWS Nitro, GCP’s flow, Azure SEV-SNP, custom edge TPM based checks.
+
+Suddenly you’re buried in cryptography, APIs, and one-off integrations.  
+It’s inconsistent, expensive, and impossible to scale.
+
+---
+
+## What Esperanto Does
+
+Esperanto unifies Remote Attestation (RA) of the firmware, OS/kernel, and virtualization/TEE your workloads run on.
+
+- **One API, all platforms** — TPMs, TEEs, enclaves.
+- **Simple enrollment + just-in-time checks** before sensitive operations.
+- **Standards aligned** — built on the IETF RATS framework, no proprietary lock-in.
+
+Just:
+
+1. **Enroll** a platform once in its trusted state.
+2. **Attest** it on demand before releasing secrets, models, or workloads.
+
+---
+
+## Why It Matters
+
+Without RA:
+
+- Secrets can land on compromised hosts.
+- Tampered firmware or kernels can go undetected.
+- Attackers can persist below the application layer, invisible to monitoring.
+
+With Esperanto:
+
+- Trust enforcement is **unified and automated**.
+- Developers don’t need to be crypto experts.
+- Security leaders get confidence that sensitive workloads only run on verified platforms.
+
+---
+
+## See It in Action
+
+Esperanto is in **development** — while the demo is a proof of concept and demonstration of use, it is **currently** wildly insecure, bloated, and probably very buggy.
+
+[See the Docs & Demo](/esperanto_overview)
+
+---
+
+**Esperanto is built for developers inside enterprises — and the security leaders they support — to make Remote Attestation practical at scale.**

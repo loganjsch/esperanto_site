@@ -5,7 +5,9 @@ description: A reference page in my new Starlight docs site.
 
 **Esperanto** is a fast, secure, and highly scalable service for unified integration of Remote Attestation (RA) across your workflows.
 
-RA enables you to verify the integrity of your systems and enforce trust across cloud, edge, and device deployments — protecting your applications and secrets by proving your hardware and software are uncompromised.
+Esperanto standardizes RA workflows across platforms by abstracting away vendor complexity without replacing their underlying cryptographic roots of trust — so you gain portability and scale while preserving the same hardware-level assurances.
+
+RA enables you to verify the integrity of your systems and enforce trust across cloud, edge, and device deployments — protecting your applications and secrets by proving your firmware, OS/kernel, and virtualization/TEE environment are uncompromised.
 To learn more about Remote Attestation itself, see [What is Remote Attestation?](/ra_overview).
 
 ---
@@ -18,14 +20,15 @@ Unfortunately, Remote Attestation is:
 - Operationally hard to manage at scale
 - Inconsistent across platforms and vendors
 
-**Esperanto solves this problem.**  
-With Esperanto, you simply:
+**Esperanto solves this problem.**
+
+With Esperanto, you integrate RA into applications with a simple API, without needing deep cryptographic expertise. Esperanto handles vendor quirks so you can focus on building. Simply,
 
 1. **Enroll** a platform in its trusted state.
 2. **Attest** the cryptographic state of that platform **just-in-time (JIT)** before any sensitive or secure operation.
 
 Esperanto does not reinvent the wheel — it builds on the **RATS framework (Remote ATtestation Procedures)** published by IETF.  
-👉 [Read more about the RATS framework](/reference/rats).
+[Read more about the RATS framework](/reference/rats).
 
 ---
 

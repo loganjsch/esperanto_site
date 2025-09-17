@@ -13,7 +13,7 @@ If the firmware, OS kernel, or hypervisor is compromised, no amount of network o
 
 ## Hardware Root of Trust, in Practice
 
-At the core of RA is a special, tamper-resistant hardware component (such as a TPM, HSM, or CPU security extension). This hardware is responsible for:
+At the core of RA is a special, tamper-resistant hardware component such as a TPM or CPU security extension. This hardware is responsible for:
 
 - **Measuring**: recording cryptographic hashes of firmware, OS, and critical components during boot and runtime.
 - **Anchoring trust**: ensuring these measurements cannot be forged or altered.
@@ -25,25 +25,25 @@ This process gives an external system high-confidence evidence of **what is runn
 
 ## Where It Matters
 
-### Firmware / BIOS
+### Firmware & Boot Integrity
 
-- Traditional defenses can’t detect if firmware or bootloaders have been swapped or patched.
-- RA verifies the firmware hash against known-good values before sensitive operations.
+If firmware or bootloaders are tampered, the OS and workloads can’t be trusted.  
+RA validates the measured boot process against known-good states before workloads start.
 
-### Hypervisor / Trusted Execution Environments
+### Hypervisors & TEEs
 
-- Even isolated workloads can be exposed if the hypervisor or host is compromised.
-- RA ensures secrets and workloads only run inside **measured, trusted enclaves.**
+Sensitive workloads need protection even if the broader host is untrusted.  
+RA ensures they only run inside **measured and trusted enclaves** (e.g., SGX, Nitro, SEV).
 
-### Secrets and Key Management
+### Secrets & Key Provisioning
 
-- Secrets must never be provisioned into a compromised system.
-- RA enforces **“release only to attested states”**, protecting cryptographic material end-to-end.
+Secrets should never be released into a compromised OS or kernel.  
+RA enforces **“release only to attested states”**, tying key delivery to verified platform integrity.
 
-### Supply Chain & Insider Threats
+### Edge & Distributed Nodes
 
-- Malware slipped in during build, deployment, or by insiders can be detected.
-- RA validates platform state continuously, not just once at install time.
+Remote or IoT nodes are more exposed to tampering and weaker controls.  
+RA provides verifiable trust signals before they’re allowed to handle sensitive data.
 
 ---
 
