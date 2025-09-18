@@ -243,3 +243,5 @@ Failures in attestation can occur for several reasons beyond deliberate tamperin
 - **Incorrect PCR measurements** – the platform state differs from the expected baseline.
 
 By resolving expected values like PCRs at evaluation time and keeping measurements local, Esperanto ensures integrity while minimizing the risk of exposing sensitive platform details. This demo illustrates how even small changes to the enclave state are reliably detected, keeping sensitive operations safe.
+
+Email **loganjsch@gmail.com** for feedback, questions, concerns, interest, insults....
