@@ -3,9 +3,9 @@ title: Esperanto
 description: Esperanto Docs.
 template: splash
 hero:
-  tagline: Platform Trust for Any Scale
+  tagline: Platform Trust at Any Scale
   image:
-    file: ../../assets/houston.webp
+    file: ../../assets/esperanto_the_rat.png
   actions:
     - text: Docs
       link: /esperanto_overview
@@ -18,44 +18,23 @@ You need to provision secrets or process sensitive data across clouds and edge.
 
 But before you can, you have to **trust the platform your code is running on**.
 
-But each environment has its own attestation scheme:  
-AWS Nitro, GCP’s flow, Azure SEV-SNP, custom edge TPM based checks.
+But each environment has its own attestation scheme - AWS Nitro, Azure SEV-SNP, even custom TPM based checks.
 
-Suddenly you’re buried in cryptography, APIs, and one-off integrations.  
-It’s inconsistent, expensive, and impossible to scale.
+Now you’re buried in cryptography, APIs, and one-off integrations. It’s inconsistent, expensive, and impossible to scale.
 
 ---
 
 ## What Esperanto Does
 
-Esperanto unifies Remote Attestation (RA) of the firmware, OS/kernel, and virtualization/TEE your workloads run on.
+Esperanto simplifies platform trust by streamlining remote attestation (RA) across any hardware or cloud.
 
-- **One API, all platforms** — TPMs, TEEs, enclaves.
-- **Simple enrollment + just-in-time checks** before sensitive operations.
-- **Standards aligned** — built on the IETF RATS framework, no proprietary lock-in.
+It collects and verifies cryptographic proofs of your platform’s integrity — firmware, OS/kernel, and virtualization or TEE layers — so you can be confident that your workloads only run on attested, trusted platforms, wherever they’re deployed.
 
-Just:
+- **Single Endpoints** — A unified API to attest TEEs, TPMs, and other hardware-backed roots of trust.
+- **Dynamic Verification** - Perform just-in-time checks before releasing secrets, models, or any sensitive workload.
+- **Standards Aligned** — built on the IETF RATS framework, no proprietary lock-in.
 
-1. **Enroll** a platform once in its trusted state.
-2. **Attest** it on demand before releasing secrets, models, or workloads.
-
----
-
-## Why It Matters
-
-Without RA:
-
-- Secrets can land on compromised hosts.
-- Tampered firmware or kernels can go undetected.
-- Attackers can persist below the application layer, invisible to monitoring.
-
-With Esperanto:
-
-- Trust enforcement is **unified and automated**.
-- Developers don’t need to be crypto experts.
-- Security leaders get confidence that sensitive workloads only run on verified platforms.
-
----
+Esperanto is your attestation engine — the underlying layer that manages collection and verification of proofs. Whether you want to build new products, enhance data security for your customers, or seamlessly add hardware-backed trust into your CI/CD pipeline, Esperanto makes it simple.
 
 ## See It in Action
 
@@ -64,7 +43,5 @@ Esperanto is in **development** — while the demo is a proof of concept and dem
 [See the Docs & Demo](/esperanto_overview)
 
 ---
-
-**Esperanto is built for developers inside enterprises — and the security leaders they support — to make Remote Attestation practical at scale.**
 
 Email **loganjsch@gmail.com** for feedback, questions, concerns, interest, insults....

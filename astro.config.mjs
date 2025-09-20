@@ -36,7 +36,7 @@ export default defineConfig({
 					label: 'Reference',
 					items: [
 						{ label: 'ref1', slug: 'reference/ref1' },
-						{ label: 'ref2', slug: 'reference/ref2' },
+						{ label: 'ref2', slug: 'reference/trust' },
 						{ label: 'rats', slug: 'reference/rats' },
 
 					]

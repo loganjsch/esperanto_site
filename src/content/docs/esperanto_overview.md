@@ -32,37 +32,32 @@ Esperanto does not reinvent the wheel — it builds on the **RATS framework (Rem
 
 ---
 
+## How Esperanto Works
+
+Esperanto consists of a core service that receives attestation evidence and evaluates it against conditions defined in a trusted state. Platform agents handle requests from the core, interact with the environment’s hardware root of trust (HRoT) to collect system measurements, and forward those signed measurements back to the core.
+
+At a very high level, the interaction looks like this:
+![Demo Output Invalid](../../assets/overview.png)
+
 ## When to Use Esperanto
 
-### 1. Organizations Already Using RA at Scale
+Esperanto is ideal whenever you need **platform trust at scale**. Whether you’re already leveraging RA in TEEs and confidential computing, or building new workloads that demand cryptographic proof of trust, Esperanto simplifies attestation, unifies policies, and enforces trust consistently across clouds, edge, and on-prem systems.
 
-If you already use Confidential Computing or Trusted Execution Environments (TEEs), you know that RA is unavoidable.  
-Technologies like **AWS Nitro Enclaves, Google Confidential Cloud, Azure Confidential Computing, OP-TEE, SGX, or TPM/Keylime** all require attestation.
+### Key Scenarios
 
-Challenges without Esperanto:
+1. **Organizations Already Using RA**
 
-- Each platform handles attestation differently.
-- Vendor lock-in makes interoperability painful.
-- Scaling policies and enforcement is a management nightmare.
+   - AWS Nitro Enclaves, GCP Confidential Cloud, Azure Confidential Computing, OP-TEE, SGX, TPM/Keylime, etc.
+   - **Esperanto benefit:** One consistent API, unified orchestration, and simplified evaluation across heterogeneous environments.
 
-**Esperanto benefit:**  
-Esperanto unifies policies, orchestration, and attestation evaluation across heterogeneous environments — reducing overhead and minimizing misconfiguration risk.
+2. **New Workloads Requiring Low-Level Trust**
+   - Edge devices in untrusted environments
+   - High-value AI/ML inference or cryptographic workloads
+   - Forward-deployed, resource-constrained systems
+   - Zero-trust platform implementations
+   - **Esperanto benefit:** Plug-and-play attestation engine — handles collection and verification so you can focus on using the trust results.
 
----
-
-### 2. New Workloads Requiring Low-Level Trust
-
-Some environments demand proof of trustworthiness before running sensitive operations:
-
-- Edge devices deployed in untrusted physical environments
-- High-value compute workloads (AI/ML inference, cryptographic services, licensing enforcement)
-- Forward-deployed or resource-constrained systems
-- Platforms implementing a true zero trust model.
-
-**Esperanto benefit:**  
-Esperanto makes it easy to integrate RA without requiring deep cryptographic expertise. It provides a **usable, scalable trust layer** that works across diverse hardware and cloud environments.
-
----
+> For slightly more detailed examples of how Esperanto integrates with SaaS, edge, multi-cloud, and compliance-heavy workloads, see our [use cases](/usecases).
 
 ## Key Takeaways
 
