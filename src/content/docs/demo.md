@@ -3,245 +3,235 @@ title: Demo Guide
 description: A guide in my new Starlight docs site.
 ---
 
-# Esperanto Remote Attestation Demo
+Editors note: I talk about how Ratatouille makes things easy and not complex, then immediately start diving into policies, fingerprints, etc.. I think this demo page should show users perspective rather than the steps to take to get it operational - when it's all said and done, how would a user interact with Ratatouille? e.g. IMA policy fixed, runtime policy and new hashes created/added to policy via client tool, etc..
 
-This demo is designed to give context as to how to integrate remote attestation into your workflows using Esperanto.
+# Demo Flow
 
-- **Goal A:** Remote attestation actually verifies the integrity of a remote platform.
-- **Goal B:** The Esperanto platform makes enrollment, attestation checks, and secure payload delivery simple and unified.
-- **Goal C:** Multi-platform integration (e.g., **Nitro → Keylime**) illustrates real-world **composability**. TBH this part aint done. LOL~!
+This flow will demonstrate how to enable the Ratatouille system to operationalize CI/CD controlled policy changes into a deployed production RATs framework using Keylime.
 
-This demo also doesn't do anythign with userdata or pub key.
+First we need an IMA policy - I tried twice to make custom versions, but it’s very easy to break the boot sequence and disk.
 
----
-
-## Demo Script
-
-```python
-#!/usr/bin/env python3
-"""
-Esperanto Demo Script
-----------------------
-Shows how remote attestation works via the Core service.
-
-Flow:
-1. Platform is already enrolled separately via `python3 agent.py enroll`.
-2. Demo script -> Core /authorize API to check trust.
-   (Core internally waits for agent attestation callback.)
-3. If trusted, deliver a payload.
-4. If untrusted, deny delivery.
-
-
-General usage
----------------
-resp = requests.post("http://core:3000/authorize", json=my_auth_request)
-if resp.json()["verdict"] == "Trusted":
-    do_sensitive_action()
-
-"""
-
-import requests
-import uuid
-import sys
-import json
-
-CORE_URL = "http://127.0.0.1:3000"
-
-def run_demo():
-    auth_request = {
-        # omit requestId to let Core generate
-        "principal": "test-user",
-        "action": "read",
-        "resource": "nitro-test",
-        "targetHost": "http://ec2-3-133-105-4.us-east-2.compute.amazonaws.com:5000",
-        "metadata": None,   # optional, null
-        "evidenceMode": "direct"
-    }
-
-    print("[*] Sending /authorize request to Core...")
-    print("[*] JSON payload being sent:")
-    print(json.dumps(auth_request, indent=2))
-
-    try:
-        resp = requests.post(
-            f"{CORE_URL}/authorize",
-            json=auth_request,
-            headers={"Content-Type": "application/json"},
-            timeout=60
-        )
-        resp.raise_for_status()
-    except requests.HTTPError as e:
-        print(f"[!] HTTPError: {e}")
-        print(f"[!] Response content: {resp.text}")
-        sys.exit(1)
-
-    body = resp.json()
-    print("[+] Authorize response received:")
-    print(json.dumps(body, indent=2))
-
-    verdict = body.get("verdict")
-    if verdict == "Trusted":
-        print("[✓] Platform attested successfully. Payload may be provisioned.")
-        deliver_secrets()
-    else:
-        print("[X] Platform attestation failed or untrusted. Payload withheld.")
-
-def deliver_secrets():
-    print("Yay secrets going for a trip!")
-
-if __name__ == "__main__":
-    print("=== Esperanto Remote Attestation Demo ===")
-    print("Please ensure the agent is running and the platform is enrolled.")
-    print("=========================================")
-    run_demo()
-```
-
-## Walkthrough
-
-This walkthrough shows Esperanto in action — from enrolling a platform, attesting its state, simulating tampering, and re-attesting to see the change.
-
----
-
-### Step 1: Enroll
-
-**Command:**
-
-```bash
-# Example command
-python3 esperanto_agent.py enroll aws_enclave
-```
-
-**Screenshot**
-
-**Description:**
-Enrollment registers the enclave or platform with Esperanto Core in its expected trusted state. This “known-good” baseline is used for all future attestations. It creates a policy for you to manage:
+So, use the standard one —
 
 ```yaml
-id: test-policy-id
-name: Test Nitro Enclave
-description: A test policy for a Nitro Enclave
-platform_attestation_params:
-  type: AwsNitroEnclave
-  id: test-policy-id
-  name: Test Nitro Enclave
-  description: A test policy for a Nitro Enclave
-  expected_pcrs:
-    - index: 0
-      value: vault://goldenvault/nitro/test-policy-id/pcr0
-    - index: 1
-      value: vault://goldenvault/nitro/test-policy-id/pcr1
-    - index: 2
-      value: vault://goldenvault/nitro/test-policy-id/pcr2
-    - index: 8
-      value: vault://goldenvault/nitro/test-policy-id/pcr8
-  expected_public_key: 6d7920737570657220736563726574206b6579
-  expected_user_data: 68656c6c6f2c20776f726c6421
-  nonce_required: true
+# PROC_SUPER_MAGIC
+dont_measure fsmagic=0x9fa0
+# SYSFS_MAGIC
+dont_measure fsmagic=0x62656572
+# DEBUGFS_MAGIC
+dont_measure fsmagic=0x64626720
+# TMPFS_MAGIC
+dont_measure fsmagic=0x01021994
+# RAMFS_MAGIC
+dont_measure fsmagic=0x858458f6
+# SECURITYFS_MAGIC
+dont_measure fsmagic=0x73636673
+# MEASUREMENTS
+measure func=BPRM_CHECK
+measure func=FILE_MMAP mask=MAY_EXEC
+measure func=MODULE_CHECK uid=0
 ```
 
-Measurements are not stored directly in the human-readable policy because policies are meant to be portable and may change. Instead, measurements are kept locally as a single source of truth. Expected values—like PCRs—are resolved from the policy at evaluation time. This approach prevents accidental or malicious modification of measurements, and keeps sensitive platform details hidden. While PCRs are not strictly secret (they are only valid in signed attestation reports), exposing them unnecessarily could give an attacker an advantage, so they are never stored in a policy file.
+It’s also important that IMA measures all executions because if we were to pick and choose, that would defeat the security of the entire thing.
 
-### Step 2: Attest
+<aside>
+⚠️
 
-**Demo Script Output**
+_If this is not on a fresh system, we need to restart the system to clear the TPM PCRs and the IMA log._
 
-![Demo Output Valid](../../assets/demo_output_valid.png)
+</aside>
 
-**Core Logs**
+We also need a Keylime runtime policy. This is much more flexible than our IMA-policy (mistake doesn’t break the machine, just fails attestation), but it’s still a little tricky and brittle. We need to include everything that will execute on the machine, including agent executable, RUST executables, kernel objects, etc… as well as our ‘custom code’ —> job schedulers, servers. In our demo case, this is the ‘demo script’.
 
-![Core Output Valid](../../assets/core_output_valid2.png)
+The easiest way to do this is to use the ‘create policy tool’ that Keylime offers on a fresh restart of the machine in question. The goal is to exclude as much as possible, while still maintaining everything we expect to be loaded or execute - with even a moderately complex service, this can be tricky because dependencies can spiral very quickly.
 
-Importantly...
+[Demo Allow List (1)](https://www.notion.so/Demo-Allow-List-1-2bde169462a180b9be2ad83b8e3dc1c1?pvs=21)
 
-```
-...
-From policy: PCR0 = d920cb1a30bbf76f259b52f0723f6671e857432b7577164234656c6a64b442a06514839e590738c353774db61cd482f0
-From policy: PCR1 = 4b4d5b3661b3efc12920900c80e126e4ce783c522de6c02a2a5bf7af3a2b9327b86776f188e4be1c1c404a129dbda493
-From policy: PCR2 = f09d075e7f9157f45dfdc536343d97e9c8055b3aea007f3d9afb46feb4dbf4cc4ddcc98f8b66d4b1d894a3631b0d2283
-From policy: PCR8 = ffae376606daf9066c26510d743bd15ab80a5f80afab438020238e9de1a8deb73c903c77ba47421ad2f4af20fd8c1b22
-Built expected_pcr_map: PCR2 = f09d075e7f9157f45dfdc536343d97e9c8055b3aea007f3d9afb46feb4dbf4cc4ddcc98f8b66d4b1d894a3631b0d2283
-Built expected_pcr_map: PCR0 = d920cb1a30bbf76f259b52f0723f6671e857432b7577164234656c6a64b442a06514839e590738c353774db61cd482f0
-Built expected_pcr_map: PCR1 = 4b4d5b3661b3efc12920900c80e126e4ce783c522de6c02a2a5bf7af3a2b9327b86776f188e4be1c1c404a129dbda493
-Built expected_pcr_map: PCR8 = ffae376606daf9066c26510d743bd15ab80a5f80afab438020238e9de1a8deb73c903c77ba47421ad2f4af20fd8c1b22
-Attestation successfully verified.
-...
+```yaml
+sudo ./create_runtime_policy.sh -a sha256sum -o ../demo_runtime_policy.json
+
+(-o demo_runtime_logs.txt) if running without dependencies.
 ```
 
-**Agent Logs**
+<aside>
+⚠️
 
-![Agent Output Valid](../../assets/agent_logs.png)
+If this is just the script (no keylime src code), then this will output a list of hashes and paths from the IMA log. We have to convert that .txt into the json runtime policy using the tools at keylime/keylime/cmd. The script notes that there’s only 3 dependencies, so it’s probably not the end of the world if that Keylime src code is stored and this conversion is done on device.
 
-```
-Received challenge: {'attestationType': 'nitro_enclave', 'authProcessId': 'a2b0b196-8651-47f6-a1f8-a60103d9feec', 'challengePayload': 'SGFyZGNvZGVkIGF0dGVzdGF0aW9uIGluc3RydWN0aW9ucyBmb3IgcG9saWN5IHRlc3QtcG9saWN5LWlkIHdpdGggbm9uY2UgQVNORlo0bXJ6ZS8rM0xxWWRsUXlFQkF5VkhhWXV0eis3ODJyaVdkRkl3RT0=', 'evidenceSubmissionUrl': '/attestation', 'nonce': 'ASNFZ4mrze/+3LqYdlQyEBAyVHaYutz+782riWdFIwE='}
-Core response: Evidence received and forwarded for processing.
-66.27.127.62 - - [05/Sep/2025 23:14:31] "POST /attest HTTP/1.1" 200 -
-```
+</aside>
 
-**Description:**
-The attestation process cryptographically measures the platform against its enrolled baseline. A successful result confirms the enclave is uncompromised and eligible for sensitive operations (e.g., key provisioning, authorization).
+```yaml
+# Convert to runtime policy
+mkdir -p $OUTPUT_DIR
+announce "Converting created allowlist ($ALLOWLIST_DIR/${OUTPUT}) to Keylime runtime policy ($OUTPUT_DIR/${OUTPUT}) ..."
+CONVERT_CMD_OPTS="--allowlist $ALLOWLIST_DIR/${OUTPUT} --output_file $OUTPUT_DIR/${OUTPUT}"
+[ -f $EXCLUDE_LIST ] && CONVERT_CMD_OPTS="$CONVERT_CMD_OPTS --excludelist "$(readlink -f -- "${EXCLUDE_LIST}")""
 
-At this point its up to your business logic to decide what to do - do_sensitive_action()
-
-### Step 3: Tamper with Enclave
-
-Something like... For the real real demo, I think it'll be good to load some sus binary into the enclave and show that it is no good.
-
-```
-// Simulate a compromise by altering a PCR value in the resolved policy
-let mut tampered_policy = original_policy.clone();
-tampered_policy.expected_pcr_map.insert("PCR1".to_string(), "982475934857efc12920900c80e126e4ce783c522de6c02a2a5bf7af3a2b9327b86776f188e4be1c1c404a129dbda493".to_string());
-```
-
-// Re-run attestation check
-let result = verify*attestation(&tampered_policy, &attestation_report);
-assert!(matches!(result, Err(CoreError::PcrMismatch(*))));
-**Description:**
-Here we simulate a compromise by modifying the enclave state (e.g., changing a binary!!, altering the environment). This breaks the integrity guarantee captured during enrollment.
-
-### Step 4: Attest Again
-
-**Screenshot:**
-
-**Demo Script Output**
-
-![Demo Output Invalid](../../assets/demo_output_invalid.png)
-
-![Core Output Invalid](../../assets/core_output_invalid.png)
-
-Importantly... PCR1 (output formatted for readabiliy)
-
-```rust
-Attestation verification failed with error: PcrMismatch(
-    "UnexpectedPCRs(
-        \"PCRS {
-            PCR0: Some(\\\"d920cb1a30bbf76f259b52f0723f6671e857432b7577164234656c6a64b442a06514839e590738c353774db61cd482f0\\\"),
-            PCR1: Some(\\\"982475934857efc12920900c80e126e4ce783c522de6c02a2a5bf7af3a2b9327b86776f188e4be1c1c404a129dbda493\\\"),
-            PCR2: Some(\\\"f09d075e7f9157f45dfdc536343d97e9c8055b3aea007f3d9afb46feb4dbf4cc4ddcc98f8b66d4b1d894a3631b0d2283\\\"),
-            PCR8: Some(\\\"ffae376606daf9066c26510d743bd15ab80a5f80afab438020238e9de1a8deb73c903c77ba47421ad2f4af20fd8c1b22\\\")
-        }\",
-        \"PCRS {
-            PCR0: Some(\\\"d920cb1a30bbf76f259b52f0723f6671e857432b7577164234656c6a64b442a06514839e590738c353774db61cd482f0\\\"),
-            PCR1: Some(\\\"4b4d5b3661b3efc12920900c80e126e4ce783c522de6c02a2a5bf7af3a2b9327b86776f188e4be1c1c404a129dbda493\\\"),
-            PCR2: Some(\\\"f09d075e7f9157f45dfdc536343d97e9c8055b3aea007f3d9afb46feb4dbf4cc4ddcc98f8b66d4b1d894a3631b0d2283\\\"),
-            PCR8: Some(\\\"ffae376606daf9066c26510d743bd15ab80a5f80afab438020238e9de1a8deb73c903c77ba47421ad2f4af20fd8c1b22\\\")
-        }\"
-    )"
-)
+pushd $KCRP_BASE_DIR  > /dev/null 2>&1
+export PYTHONPATH=$KCRP_BASE_DIR:$PYTHONPATH
+# only 3 dependencies required: pip3 install cryptography lark packaging
+python3 ./keylime/cmd/convert_runtime_policy.py $CONVERT_CMD_OPTS; echo " "
+if [[ $? -eq 0 ]]
+then
+    announce "Done, new runtime policy file present at ${OUTPUT_DIR}/$OUTPUT. It can be used on the tenant keylime host with \"keylime_tenant -c add --runtime-policy ${OUTPUT_DIR}/$OUTPUT <other options>"
+fi
+popd  > /dev/null 2>&1
 ```
 
-**Description:**
-When attestation is run again, Esperanto detects the mismatch against the trusted baseline. The enclave is flagged as untrusted, and sensitive operations (like secret release or authorization) are denied
+If we don’t want to have to have all of this on the agent machine, which I think we don’t, we need to run the following on a verifier which has been given the output.txt from the previous command.
 
-## Summary
+```yaml
+python keylime/cmd/convert_runtime_policy.py --allowlist demo_runtime_logs.txt --output_file demo_runtime_policy.json
+```
 
-In this demo, we walked through enrolling a platform with Esperanto, performing a remote attestation, simulating a tamper, and re-attesting to see the system detect the compromise. Remote attestation verifies that a platform matches its expected trusted state, and Esperanto simplifies enrollment, measurement verification, and secure payload delivery.
+I also had to manually sha256 these and add these entries to the end of the policy.
 
-Failures in attestation can occur for several reasons beyond deliberate tampering, including:
+```yaml
+        .....
+        ],
+        "/home/loganschwarz/.cargo/bin/rustup": [
+            "20a06e644b0d9bd2fbdbfd52d42540bdde820ea7df86e92e533c073da0cdd43c"
+        ],
+        "/home/loganschwarz/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo": [
+            "e60b4010303c19a131c058e3f054b4b3311433c4b2ee94ba8e09e165ff2a3b3b"
+        ],
+        "/home/loganschwarz/rust-keylime/target/debug/keylime_agent": [
+            "292c98c3e31da2623a6659bd7b2d1ef10a069515998f8b489fd8eedfc18790dc"
+        ]
+```
 
-- **Nonce expiration** – the challenge issued by Core is no longer valid.
-- **Invalid or incomplete root certificate chain** – the attestation report cannot be verified against trusted roots.
-- **Incorrect PCR measurements** – the platform state differs from the expected baseline.
+Keylime recommends that you do this in an airgapped ‘secure’ staging environment. For full confidence in security, this is your best shot, but it’s not required should your threat model allow a more flexible policy creation method.
 
-By resolving expected values like PCRs at evaluation time and keeping measurements local, Esperanto ensures integrity while minimizing the risk of exposing sensitive platform details. This demo illustrates how even small changes to the enclave state are reliably detected, keeping sensitive operations safe.
+Next, for the demos sake, we manually update the verifier with this new policy/agent entry to demonstrate that attestation works:
 
-Email **loganjsch@gmail.com** for feedback, questions, concerns, interest, insults....
+(In production, you would push this policy to the policy repo.)
+
+```yaml
+sudo keylime_tenant -c update -t 10.128.0.6 -tp 9002 -v 10.128.0.4 -vp 8881 -u d432fbb3-d2f1-4a97-9ef7-75bd81c00000 --runtime-policy demo_runtime_policy.json
+```
+
+With Keylime running, the verifier should be polling the agent. Ensure that the agent was init with a runtime policy that includes the initial demo script:
+
+```yaml
+....
+ DEBUG keylime_agent::quotes_handler        > Calling Integrity Quote with nonce: 3Rgkfv2FvXGKBPkp0BJ9, mask: 0x400
+ INFO  keylime_agent::quotes_handler        > GET integrity quote returning 200 response
+ INFO  keylime_agent                        > GET invoked from "10.128.0.4" with uri /v2.2/quotes/integrity?nonce=OanBCiOkqNBEVpSlHpts&mask=0x400&partial=1&ima_ml_entry=369
+ DEBUG keylime_agent::quotes_handler        > Calling Integrity Quote with nonce: OanBCiOkqNBEVpSlHpts, mask: 0x400
+ INFO  keylime_agent::quotes_handler        > GET integrity quote returning 200 response
+ INFO  keylime_agent                        > GET invoked from "10.128.0.4" with uri /v2.2/quotes/integrity?nonce=mgC8tubHxSSBYNUuoeuQ&mask=0x400&partial=1&ima_ml_entry=369
+ DEBUG keylime_agent::quotes_handler        > Calling Integrity Quote with nonce: mgC8tubHxSSBYNUuoeuQ, mask: 0x400
+ INFO  keylime_agent::quotes_handler        > GET integrity quote returning 200 response
+ INFO  keylime_agent                        > GET invoked from "10.128.0.4" with uri /v2.2/quotes/integrity?nonce=ZjWooM6nA6fm87ROLLiz&mask=0x400&partial=1&ima_ml_entry=369
+ ....
+```
+
+Run the following to execute the script and view IMA record of its execution:
+
+```yaml
+[loganschwarz@agent-vm]:/etc/demo$ sudo grep esperanto_demo.sh /sys/kernel/security/ima/ascii_runtime_measurements
+	- we see here that this script has not been recorded
+
+[loganschwarz@agent-vm]:/etc/demo $ sudo ./esperanto_demo.sh
+Hello, I am trusted :)
+
+loganschwarz@agent-vm:/etc/demo$ sudo grep esperanto_demo.sh /sys/kernel/security/ima/ascii_runtime_measurements
+10 e8a4f4cf8a29eb1abddb34520763d7aaf8a18200 ima-ng sha256:af0dd6b6e00ab18d613a4c51220e33295b9e929375eea134901a149d27385062 /etc/demo/esperanto_demo.sh
+```
+
+You can also note here that the ima_ml_entry sent in the uri has increased by one, indicated that we are sending the verifier the incremental log that just executed.
+
+Now we modify the script, and execute again:
+
+```yaml
+loganschwarz@agent-vm:/etc/demo$ vim esperanto_demo.sh
+loganschwarz@agent-vm:/etc/demo$ ./esperanto_demo.sh
+Hello, I am NOT trusted :)
+loganschwarz@agent-vm:/etc/demo$ sudo grep esperanto_demo.sh /sys/kernel/security/ima/ascii_runtime_measurements
+10 e8a4f4cf8a29eb1abddb34520763d7aaf8a18200 ima-ng sha256:af0dd6b6e00ab18d613a4c51220e33295b9e929375eea134901a149d27385062 /etc/demo/esperanto_demo.sh
+10 73e87408a8dc0c1e9ab48e92fee70013028aecac ima-ng sha256:196f60a809bdc3ab61293820d62ba20e73351787633da9eb02f4752e68a2349b /etc/demo/esperanto_demo.sh
+loganschwarz@agent-vm:/etc/demo$
+```
+
+We see that the device failed to attest (and revocation cert sent, although not configured)
+
+```yaml
+2025-11-19 05:15:39.849 - keylime.tpm - INFO - Checking IMA measurement list on agent: d432fbb3-d2f1-4a97-9ef7-75bd81c00000
+2025-11-19 05:15:39.849 - keylime.ima - WARNING - Hashes for file /etc/demo/esperanto_demo.sh don't match 196f60a809bdc3ab61293820d62ba20e73351787633da9eb02f4752e68a2349b not in ['af0dd6b6e00ab18d613a4c51220e33295b9e929375eea134901a149d27385062']
+2025-11-19 05:15:39.850 - keylime.ima - ERROR - IMA ERRORS: Some entries couldn't be validated. Number of failures in modes: ImaNg 1.
+2025-11-19 05:15:39.928 - keylime.verifier - WARNING - Agent d432fbb3-d2f1-4a97-9ef7-75bd81c00000 failed, stopping polling
+```
+
+Now we need to change the policy to allow for our new script.
+
+Options:
+
+Option A: Grab a fingerprint from the expected file:
+
+```yaml
+loganschwarz@agent-vm:/etc/demo$ sha256sum esperanto_demo.sh
+196f60a809bdc3ab61293820d62ba20e73351787633da9eb02f4752e68a2349b  esperanto_demo.sh
+```
+
+Then add it to the correct entry in the existing policy.
+
+NOTE: The previous measurement will stay in IMA measurements, so you either need to keep that hash in the allowlist or restart the device to wipe the measurements. In theory, in production, a failure would cause some revocation procedure which likely means restarting/wiping the machine and not just enabling the new malicious software, so this is more of a demo gotcha.
+
+```yaml
+"292c98c3e31da2623a6659bd7b2d1ef10a069515998f8b489fd8eedfc18790dc"
+        ],
+        "/etc/demo/esperanto_demo.sh": [
+            "af0dd6b6e00ab18d613a4c51220e33295b9e929375eea134901a149d27385062",
+            "196f60a809bdc3ab61293820d62ba20e73351787633da9eb02f4752e68a2349b"
+        ]
+    },
+    "excludes": [],
+    "keyrings": {},
+    "ima": {
+        "ignored_keyrings": [],
+```
+
+Option B: Recreate runtime policy based on the new script
+
+```yaml
+sudo ./create_runtime_policy.sh -o ~/keylime/demo_runtime_policy2.json  -z /etc/demo -x none
+```
+
+Sign the new policy changes, then push the new policy and the signature artifact to policy git repo. The Esperanto Client provides the automation for these steps.
+
+```yaml
+loganschwarz@W-PF1CQHPB runtime % cosign sign-blob runtime_policy_keylime.json --bundle artifact.sigstore.json
+
+        The sigstore service, hosted by sigstore a Series of LF Projects, LLC, is provided pursuant to the Hosted Project Tools Terms of Use, available at https://lfprojects.org/policies/hosted-project-tools-terms-of-use/.
+        Note that if your submission includes personal data associated with this signed artifact, it will be part of an immutable record.
+        This may include the email address associated with the account with which you authenticate your contractual Agreement.
+        This information will be used for signing this artifact and will be stored in public transparency logs and cannot be removed later, and is subject to the Immutable Record notice at https://lfprojects.org/policies/hosted-project-tools-immutable-records/.
+
+By typing 'y', you attest that (1) you are not submitting the personal data of any other person; and (2) you understand and agree to the statement and the Agreement terms at the URLs listed above.
+Are you sure you would like to continue? [y/N] y
+Your browser will now be opened to:
+https://oauth2.sigstore.dev/auth/auth?access_type=online&client_id=sigstore&code_challenge=z-hBvy1-dqYphMSDjTmCYWto9eBCINFBNbDUG9uqtDc&code_challenge_method=S256&nonce=36HAMCYOIZBcapHTy0ZzLNI7p2H&redirect_uri=http%3A%2F%2Flocalhost%3A59877%2Fauth%2Fcallback&response_type=code&scope=openid+email&state=36HAMAhy1AeR7X9XnShig3zbQqJ
+Using payload from: runtime_policy_keylime.json
+Wrote bundle to file artifact.sigstore.json
+loganschwarz@W-PF1CQHPB runtime % git add artifact.sigstore.json runtime_policy_keylime.json
+loganschwarz@W-PF1CQHPB runtime % git commit -m "yay"
+loganschwarz@W-PF1CQHPB runtime % git push
+```
+
+The Github app recognizes this, pushes new policy to verifier, updates agent with new policy.
+
+This attempts to restart polling with an attestation check, which should now pass and polling should continue like normal.
+
+```yaml
+2025-12-02 05:25:05.237 - keylime.verifier - INFO - DELETE returning 200 response for agent id: d432fbb3-d2f1-4a97-9ef7-75bd81c00000
+2025-12-02 05:25:10.004 - keylime.verifier - WARNING - Connecting to agent without mTLS: d432fbb3-d2f1-4a97-9ef7-75bd81c00000
+2025-12-02 05:25:10.005 - keylime.verifier - INFO - POST returning 200 response for adding agent id: d432fbb3-d2f1-4a97-9ef7-75bd81c00000
+2025-12-02 05:25:10.782 - keylime.tpm - INFO - Checking IMA measurement list on agent: d432fbb3-d2f1-4a97-9ef7-75bd81c00000
+2025-12-02 05:25:21.748 - keylime.tpm - INFO - Checking IMA measurement list on agent: d432fbb3-d2f1-4a97-9ef7-75bd81c00000
+```
+
+# UI Demo
+
+Now that we have a working attestation pipeline, we are going to take a look at how Esperanto makes managing and configuring this attestation pipeline easy.
+
+… TODO

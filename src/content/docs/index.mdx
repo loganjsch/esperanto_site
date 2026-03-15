@@ -1,6 +1,6 @@
 ---
-title: Esperanto
-description: Esperanto Docs.
+title: Ratatouille
+description: Ratatouille Docs.
 template: splash
 hero:
   tagline: Platform Trust at Any Scale
@@ -14,31 +14,21 @@ hero:
 
 ## The Scenario…
 
-You need to provision secrets or process sensitive data across clouds and edge.
+Verifiable platform trust is no longer optional.
 
-But before you can, you have to **trust the platform your code is running on**.
+Whether you're a business running your services on someone else's cloud, or an enterprise building a security and compliance baseline across your IoT fleet, you need a way to prove the integrity of your workloads down to the hardware.
 
-But each environment has its own attestation scheme - AWS Nitro, Azure SEV-SNP, even custom TPM based checks.
-
-Now you’re buried in cryptography, APIs, and one-off integrations. It’s inconsistent, expensive, and impossible to scale.
+Manually attesting even a single platform at scale is complicated. When you have multiple platforms and environments—each with its own security scheme—it becomes an inconsistent, fragmented, and unscalable operational nightmare.
 
 ---
 
-## What Esperanto Does
+## What Ratatouille Does
 
-Esperanto simplifies platform trust by streamlining remote attestation (RA) across any hardware or cloud.
-
-It collects and verifies cryptographic proofs of your platform’s integrity — firmware, OS/kernel, and virtualization or TEE layers — so you can be confident that your workloads only run on attested, trusted platforms, wherever they’re deployed.
-
-- **Single Endpoints** — A unified API to attest TEEs, TPMs, and other hardware-backed roots of trust.
-- **Dynamic Verification** - Perform just-in-time checks before releasing secrets, models, or any sensitive workload.
-- **Standards Aligned** — built on the IETF RATS framework, no proprietary lock-in.
-
-Esperanto is your attestation engine — the underlying layer that manages collection and verification of proofs. Whether you want to build new products, enhance data security for your customers, or seamlessly add hardware-backed trust into your CI/CD pipeline, Esperanto makes it simple.
+Ratatouille makes it practical to deploy RATS-based trust across your infrastructure. Provides a system to let you define, distribute, and continuously enforce trusted execution policies across your infrastructure without having to integrate or manage the underlying attestation components or logic yourself.
 
 ## See It in Action
 
-Esperanto is in **development** — while the demo is a proof of concept and demonstration of use, it is **currently** wildly insecure, bloated, and probably very buggy.
+Ratatouille is in **development** — while the demo is a proof of concept and demonstration of use, it is **currently** wildly insecure, bloated, and probably very buggy.
 
 [See the Docs & Demo](/esperanto_overview)
 

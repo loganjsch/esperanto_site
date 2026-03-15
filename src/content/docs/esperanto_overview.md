@@ -1,67 +1,39 @@
 ---
-title: Esperanto Overview
+title: Ratatouille Overview
 description: A reference page in my new Starlight docs site.
 ---
 
-**Esperanto** is a fast, secure, and highly scalable service for unified integration of Remote Attestation (RA) across your workflows.
+## What is Ratatouille
 
-Esperanto standardizes RA workflows across platforms by abstracting away vendor complexity without replacing their underlying cryptographic roots of trust — so you gain portability and scale while preserving the same hardware-level assurances.
+The Ratatouille Specification defines a secure implementation of the RATS framework by standardizing how systems produce measurements, sign policies, verify evidence, and perform continuous trust evaluation. It prescribes how to compose proven open-source components—IMA for runtime measurements, Sigstore/Cosign for policy signing, and Keylime for verification—together with best-practice processes such as policy-as-code and CI/CD integration.
 
-RA enables you to verify the integrity of your systems and enforce trust across cloud, edge, and device deployments — protecting your applications and secrets by proving your firmware, OS/kernel, and virtualization/TEE environment are uncompromised.
+Ratatouille (the service) provides production-grade implementation of this specification. It lets you define, distribute, and continuously enforce trusted execution policies across your infrastructure without having to integrate or manage the underlying attestation components or logic yourself.
+
+---
+
+## What Ratatouille does
+
+Ratatouille makes it practical to deploy RATS-based trust across your infrastructure.
+It gathers hardware-rooted evidence from each machine—secure boot measurements, firmware state, kernel integrity, runtime file measurements—and continuously proves whether the system is running what you intended.
+It provides:
+
+- Verified secure boot state
+- Verified firmware + platform integrity
+- Verified OS/kernel integrity
+- Verified runtime file and process integrity (IMA)
+- A continuous, actionable trust signal you can use for policy decisions
+
+Instead of stitching together TPMs, IMA logs, Sigstore signing, policy pipelines, and a verifier like Keylime, Ratatouille operationalizes the entire model end-to-end.
+
+---
+
+## Why Ratatouille?
+
+Remote Attestation (RA) enables you to verify the integrity of your systems and enforce trust across cloud, edge, and on-premise deployments — protecting your applications and data by proving that your deivce booted in a secure sate, and that the OS/kernel and software execution have been uncompromised since then.
 To learn more about Remote Attestation itself, see [What is Remote Attestation?](/ra_overview).
 
----
+Proprietary implementations exist for each stack, and open source frameworks such as Keylime offer a solution to interact with low level trust elements. However, turning these offerings into a unified, CI/CD integrated, operational pipeline can be a daunting task. Keylime stops short at policy management/creation, SPIFFE/SPIRE doesn't ingest these hardware rooted trust signals for.
 
-## Why Esperanto?
+## How Ratatouille?
 
-Unfortunately, Remote Attestation is:
-
-- Cryptographically complex
-- Operationally hard to manage at scale
-- Inconsistent across platforms and vendors
-
-**Esperanto solves this problem.**
-
-With Esperanto, you integrate RA into applications with a simple API, without needing deep cryptographic expertise. Esperanto handles vendor quirks so you can focus on building. Simply,
-
-1. **Enroll** a platform in its trusted state.
-2. **Attest** the cryptographic state of that platform **just-in-time (JIT)** before any sensitive or secure operation.
-
-Esperanto does not reinvent the wheel — it builds on the **RATS framework (Remote ATtestation Procedures)** published by IETF.  
-[Read more about the RATS framework](/reference/rats).
-
----
-
-## How Esperanto Works
-
-Esperanto consists of a core service that receives attestation evidence and evaluates it against conditions defined in a trusted state. Platform agents handle requests from the core, interact with the environment’s hardware root of trust (HRoT) to collect system measurements, and forward those signed measurements back to the core.
-
-At a very high level, the interaction looks like this:
-![Demo Output Invalid](../../assets/overview.png)
-
-## When to Use Esperanto
-
-Esperanto is ideal whenever you need **platform trust at scale**. Whether you’re already leveraging RA in TEEs and confidential computing, or building new workloads that demand cryptographic proof of trust, Esperanto simplifies attestation, unifies policies, and enforces trust consistently across clouds, edge, and on-prem systems.
-
-### Key Scenarios
-
-1. **Organizations Already Using RA**
-
-   - AWS Nitro Enclaves, GCP Confidential Cloud, Azure Confidential Computing, OP-TEE, SGX, TPM/Keylime, etc.
-   - **Esperanto benefit:** One consistent API, unified orchestration, and simplified evaluation across heterogeneous environments.
-
-2. **New Workloads Requiring Low-Level Trust**
-   - Edge devices in untrusted environments
-   - High-value AI/ML inference or cryptographic workloads
-   - Forward-deployed, resource-constrained systems
-   - Zero-trust platform implementations
-   - **Esperanto benefit:** Plug-and-play attestation engine — handles collection and verification so you can focus on using the trust results.
-
-> For slightly more detailed examples of how Esperanto integrates with SaaS, edge, multi-cloud, and compliance-heavy workloads, see our [use cases](/usecases).
-
-## Key Takeaways
-
-- **Unified Attestation**: Esperanto standardizes RA across enclaves, TPMs, and diverse TEEs.
-- **Scalable Trust**: Operates seamlessly from the cloud to the edge.
-- **Built on Standards**: Fully aligned with the RATS framework.
-- **Practical Security**: Turns complex attestation into a manageable, enforceable part of your workflow.
+Link here to System Design.

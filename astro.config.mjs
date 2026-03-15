@@ -6,7 +6,7 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'Esperanto',
+			title: 'Ratatouille',
 			customCss: [
 				// Relative path to your custom CSS file
 				'./src/styles/custom.css',
@@ -35,6 +35,7 @@ export default defineConfig({
 				{
 					label: 'Reference',
 					items: [
+						{ label: 'Policies', slug: 'reference/policies' },
 						{ label: 'ref1', slug: 'reference/ref1' },
 						{ label: 'ref2', slug: 'reference/trust' },
 						{ label: 'rats', slug: 'reference/rats' },
