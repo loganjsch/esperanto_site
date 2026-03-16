@@ -1,0 +1,810 @@
+---
+// icon helper — stroke-based SVG, consistent with Lucide
+const ico = (d: string, size = 18) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+
+// ── icons ────────────────────────────────────────────────────
+const LOCK     = `<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>`;
+const ZAP      = `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`;
+const GIT      = `<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>`;
+const SERVER   = `<rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>`;
+const SHIELD   = `<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>`;
+const FILECK   = `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/>`;
+const SEARCH   = `<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>`;
+const ALERT    = `<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`;
+const LAYERS   = `<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>`;
+const KEY      = `<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>`;
+const EDIT     = `<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>`;
+const TERM     = `<polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>`;
+const NETWORK  = `<rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><line x1="12" y1="12" x2="12" y2="8"/>`;
+// trust chain
+const CPU      = `<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2m0 18v2M2 15h2m18 0h2M2 9h2m18 0h2M9 2v2m0 18v2"/>`;
+const KEYSMALL = `<circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/>`;
+const BADGE    = `<rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="16 2 12 6 8 2"/>`;
+const BARCHART = `<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>`;
+const HASH     = `<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>`;
+const LIST     = `<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>`;
+const FILETXT  = `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>`;
+const EDITSMALL= `<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>`;
+const DATABASE = `<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>`;
+const TICKET   = `<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>`;
+const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="8.01" y2="6"/><line x1="16" y1="6" x2="16.01" y2="6"/><line x1="12" y1="6" x2="12.01" y2="6"/><line x1="12" y1="10" x2="12.01" y2="10"/><line x1="8" y1="10" x2="8.01" y2="10"/><line x1="16" y1="10" x2="16.01" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14"/><line x1="16" y1="14" x2="16.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/>`;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ratatouille — Remote ATTestation</title>
+  <meta name="description" content="Continuously verify every machine in your fleet against a signed policy — via TPM quote and IMA log, every ~10 seconds. TRUSTED or it isn't." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #040807;
+      --bg-surface:   #08100d;
+      --bg-card:      #0c1510;
+      --bg-card-hov:  #101c14;
+      --border:       #141f18;
+      --border-bright:#1e3326;
+      --green:        #00ff88;
+      --green-dim:    #00cc6a;
+      --green-faint:  #00884a;
+      --green-glow:   rgba(0,255,136,.10);
+      --green-glow2:  rgba(0,255,136,.22);
+      --text:         #ddeae2;
+      --text-muted:   #6d9c82;
+      --text-dim:     #2e4a3a;
+      --font:         'Inter', system-ui, -apple-system, sans-serif;
+      --mono:         'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+      --r:            8px;
+      --r-lg:         14px;
+    }
+
+    [data-theme="light"] {
+      --bg:           #f2f5f3;
+      --bg-surface:   #e8ede9;
+      --bg-card:      #eef2ef;
+      --bg-card-hov:  #e4ebe6;
+      --border:       #d0ddd4;
+      --border-bright:#b4caba;
+      --green:        #00a854;
+      --green-dim:    #008f46;
+      --green-faint:  #006b34;
+      --green-glow:   rgba(0,168,84,.10);
+      --green-glow2:  rgba(0,168,84,.20);
+      --text:         #0d1f14;
+      --text-muted:   #3a5c47;
+      --text-dim:     #7a9e87;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+      transition: background .25s, color .25s;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(0,255,136,.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+      transition: background-image .3s;
+    }
+    [data-theme="light"] body::before {
+      background-image: radial-gradient(circle, rgba(0,120,60,.08) 1px, transparent 1px);
+    }
+
+    h1,h2,h3 { font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; }
+    h1 { font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900; }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.6rem); }
+    h3 { font-size: 1.05rem; font-weight: 600; }
+    p  { color: var(--text-muted); }
+    a  { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+    .section    { padding: 100px 0; }
+    .section-sm { padding: 72px 0; }
+
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: var(--green-glow);
+      border: 1px solid rgba(0,255,136,.18);
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0; z-index: 100;
+      background: rgba(4,8,7,.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: background .25s, border-color .25s;
+    }
+    [data-theme="light"] nav { background: rgba(242,245,243,.93); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; max-width: 1140px; margin: 0 auto; height: 58px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.1rem; font-weight: 900;
+      letter-spacing: -0.03em; text-decoration: none;
+    }
+    .nav-logo .rat  { color: var(--green); }
+    .nav-logo .rest { color: var(--text); }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted); font-size: 0.875rem; font-weight: 500;
+      transition: color .18s; text-decoration: none;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--green) !important; color: #030806 !important;
+      padding: 7px 18px; border-radius: var(--r);
+      font-weight: 700 !important; font-size: 0.85rem !important;
+      transition: background .18s, transform .15s;
+    }
+    .nav-cta:hover { background: var(--green-dim) !important; transform: translateY(-1px); text-decoration: none !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 86vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+      padding: 110px 28px 0;
+      position: relative; overflow: hidden; text-align: center;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% 0%, var(--green-glow2) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 20% 80%, var(--green-glow) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 860px; width: 100%; position: relative; z-index: 1; }
+    .hero-eyebrow {
+      font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em;
+      color: var(--green); margin-bottom: 1.8rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px; opacity: .85;
+    }
+    .hero h1 { margin-bottom: 1.5rem; }
+    .hero h1 em { font-style: normal; color: var(--green); }
+    .hero-sub {
+      font-size: 1.15rem; line-height: 1.8; color: var(--text-muted);
+      margin: 0 auto 2.6rem; max-width: 620px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px; border-radius: var(--r);
+      font-weight: 600; font-size: 0.92rem;
+      cursor: pointer; transition: all .18s; text-decoration: none !important;
+    }
+    .btn-primary  { background: var(--green); color: #030806; }
+    .btn-primary:hover  { background: var(--green-dim); transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent; color: var(--text); border: 1px solid var(--border-bright);
+    }
+    .btn-secondary:hover { border-color: var(--green-faint); color: var(--green); background: var(--green-glow); }
+
+    /* ── FLEET GRID ── */
+    .fleet-wrap {
+      width: 100%; max-width: 1140px;
+      margin: 80px auto 0; padding: 0 28px;
+      position: relative; z-index: 1;
+    }
+    .fleet-header {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+      font-family: var(--mono); font-size: 0.72rem;
+    }
+    #fleet-trusted { color: var(--green); font-weight: 700; letter-spacing: .04em; }
+    #fleet-status  { font-weight: 700; letter-spacing: .04em; color: #f5c43c; }
+    .fleet-sep  { color: var(--text-dim); }
+    .fleet-meta { color: var(--text-dim); }
+    .fleet-grid { display: grid; grid-template-columns: repeat(24, 1fr); gap: 5px; }
+    .fn {
+      aspect-ratio: 1; border-radius: 3px;
+      border: 1px solid var(--border); background: var(--bg-card);
+      transition: background .35s, border-color .35s, box-shadow .35s;
+    }
+    .fn.trusted  { border-color: rgba(0,255,136,.28); background: rgba(0,255,136,.07); box-shadow: 0 0 5px rgba(0,255,136,.1); }
+    .fn.verifying{ border-color: rgba(245,196,60,.4); background: rgba(245,196,60,.07); animation: fn-verify .85s ease-in-out infinite; }
+    .fn.failed   { border-color: rgba(255,50,70,.5); background: rgba(255,30,60,.1); box-shadow: 0 0 8px rgba(255,40,70,.18); }
+    @keyframes fn-verify {
+      0%,100% { box-shadow: 0 0 3px rgba(245,196,60,.15); }
+      50%      { box-shadow: 0 0 10px rgba(245,196,60,.35); }
+    }
+    .fleet-fade {
+      height: 56px;
+      background: linear-gradient(to bottom, transparent, var(--bg));
+      margin-top: -56px; position: relative; z-index: 2; pointer-events: none;
+    }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ── SVG icon helpers ── */
+    .ico { display: inline-flex; align-items: center; justify-content: center; color: var(--green); }
+    .ico svg { display: block; }
+    .ico-muted { color: var(--text-muted); }
+
+    /* ── PROBLEM ── */
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+    .problem-lead { font-size: 1.05rem; line-height: 1.8; }
+    .problem-lead strong { color: var(--text); }
+    .problem-cards { display: flex; flex-direction: column; gap: 14px; }
+    .problem-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 22px 24px; transition: border-color .2s;
+    }
+    .problem-card:hover { border-color: var(--border-bright); }
+    .problem-card .pico { margin-bottom: 12px; }
+    .problem-card h3 { font-size: 0.92rem; color: var(--text); margin-bottom: 6px; }
+    .problem-card p  { font-size: 0.85rem; line-height: 1.65; }
+
+    /* ── FEATURES ── */
+    .section-header { text-align: center; max-width: 640px; margin: 0 auto 64px; }
+    .section-header p { margin-top: 1rem; font-size: 1rem; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 28px;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: rgba(0,255,136,.2); background: var(--bg-card-hov); transform: translateY(-2px); }
+    .feature-icon {
+      width: 42px; height: 42px;
+      background: var(--green-glow); border: 1px solid rgba(0,255,136,.15);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+    .feature-card h3 { font-size: 0.95rem; color: var(--text); margin-bottom: 8px; }
+    .feature-card p  { font-size: 0.85rem; line-height: 1.65; }
+
+    /* ── HOW IT WORKS ── */
+    .hiw-bg { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; }
+    .steps::before {
+      content: ''; position: absolute; top: 29px; left: 10%; width: 80%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-bright) 20%, var(--border-bright) 80%, transparent);
+    }
+    .step { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 14px; position: relative; }
+    .step-num {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border-bright);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--green);
+      margin-bottom: 18px; position: relative; z-index: 1;
+    }
+    .step-num.active { background: var(--green-glow); border-color: rgba(0,255,136,.35); box-shadow: 0 0 22px rgba(0,255,136,.15); }
+    .step h3    { font-size: 0.85rem; color: var(--text); margin-bottom: 8px; letter-spacing: 0; }
+    .step p     { font-size: 0.78rem; color: var(--text-dim); line-height: 1.55; }
+    .step-detail { font-family: var(--mono); font-size: 0.65rem; color: var(--green-faint); margin-top: 8px; }
+
+    /* ── USE CASES ── */
+    .usecases-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .usecase-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg);
+      padding: 30px; display: flex; flex-direction: column; gap: 14px;
+      transition: border-color .22s, transform .2s;
+    }
+    .usecase-card:hover { border-color: rgba(0,255,136,.2); transform: translateY(-3px); }
+    .usecase-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); font-weight: 600; }
+    .usecase-card h3 { font-size: 1.1rem; color: var(--text); }
+    .usecase-card p  { font-size: 0.85rem; line-height: 1.7; flex: 1; }
+    .compliance-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .ctag { font-family: var(--mono); font-size: 0.62rem; color: var(--text-dim); background: var(--bg-surface); border: 1px solid var(--border); border-radius: 4px; padding: 3px 7px; letter-spacing: 0.05em; }
+
+    /* ── TRUST CHAIN ── */
+    .chain-bg { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
+    .chain-intro { text-align: center; margin-bottom: 52px; }
+    .chain-intro p { margin-top: .8rem; font-size: .95rem; max-width: 560px; margin-left: auto; margin-right: auto; }
+    .chain-row { display: flex; align-items: center; overflow-x: auto; padding-bottom: 12px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .chain-node { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 104px; padding: 0 5px; }
+    .chain-box {
+      background: var(--bg-card); border: 1px solid var(--border-bright); border-radius: var(--r);
+      padding: 12px 8px 10px; width: 100%;
+      display: flex; flex-direction: column; align-items: center;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .chain-box:hover { border-color: rgba(0,255,136,.3); box-shadow: 0 0 16px var(--green-glow); }
+    .chain-box-icon  { color: var(--text-muted); margin-bottom: 6px; }
+    .chain-box-label { font-family: var(--mono); font-size: 0.6rem; font-weight: 700; color: var(--text-muted); letter-spacing: .06em; line-height: 1.3; }
+    .chain-box-sub   { font-size: 0.58rem; color: var(--text-dim); margin-top: 3px; line-height: 1.3; text-align: center; }
+    .chain-arrow     { flex: 0 0 auto; color: var(--green-faint); font-size: .9rem; padding: 0 3px; position: relative; top: -8px; }
+    .chain-legend { display: flex; justify-content: center; gap: 28px; margin-top: 38px; flex-wrap: wrap; }
+    .chain-legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-muted); }
+    .chain-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+    /* ── STANDARDS ── */
+    .standards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 44px; }
+    .std-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 22px; text-align: center; }
+    .std-icon  { display: flex; align-items: center; justify-content: center; color: var(--green); margin-bottom: 12px; }
+    .std-name  { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 6px; }
+    .std-desc  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; }
+
+    /* ── CTA ── */
+    .cta-section { text-align: center; padding: 100px 24px; position: relative; overflow: hidden; }
+    .cta-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,255,136,.07) 0%, transparent 70%); pointer-events: none; }
+    .cta-section h2 { margin-bottom: 1rem; }
+    .cta-section p  { max-width: 480px; margin: 0 auto 2.4rem; font-size: 1rem; }
+    .cta-actions    { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .cta-email { font-family: var(--mono); font-size: 0.82rem; color: var(--text-dim); margin-top: 1.4rem; }
+    .cta-email a { color: var(--green-faint); }
+    .cta-email a:hover { color: var(--green); }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 34px 28px; }
+    .footer-inner { max-width: 1140px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+    .footer-logo { font-weight: 800; font-size: 0.95rem; letter-spacing: -0.02em; }
+    .footer-logo .rat  { color: var(--green); }
+    .footer-logo .rest { color: var(--text-muted); }
+    .footer-links { display: flex; gap: 22px; }
+    .footer-links a { font-size: 0.8rem; color: var(--text-dim); text-decoration: none; }
+    .footer-links a:hover { color: var(--text-muted); }
+    .footer-right { font-size: 0.75rem; color: var(--text-dim); font-family: var(--mono); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .problem-grid   { grid-template-columns: 1fr; gap: 40px; }
+      .features-grid  { grid-template-columns: 1fr 1fr; }
+      .steps          { grid-template-columns: 1fr 1fr; gap: 26px; }
+      .steps::before  { display: none; }
+      .usecases-grid  { grid-template-columns: 1fr; }
+      .standards-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links      { display: none; }
+      .fleet-grid     { grid-template-columns: repeat(12, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .features-grid  { grid-template-columns: 1fr; }
+      .standards-grid { grid-template-columns: 1fr; }
+      .steps          { grid-template-columns: 1fr; }
+      .fleet-grid     { grid-template-columns: repeat(8, 1fr); }
+      h1              { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <span class="rat">RAT</span><span class="rest">atouille</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#use-cases">Use Cases</a></li>
+      <li><a href="/esperanto_overview">Docs</a></li>
+      <li><a href="#contact" class="nav-cta">Get Access</a></li>
+      <li>
+        <button id="theme-toggle" aria-label="Toggle light/dark mode" style="background:none;border:1px solid var(--border-bright);border-radius:var(--r);padding:6px 8px;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;transition:border-color .18s,color .18s;" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--green-faint)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-bright)'">
+          <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span style="color:var(--green);font-weight:800">R</span>emote&nbsp;<span style="color:var(--green);font-weight:800">AT</span>Testation&thinsp;→&thinsp;<span style="color:var(--green);font-weight:800">RAT</span>atouille
+    </div>
+    <h1>
+      What's actually running<br />
+      on your machines <em>right now?</em>
+    </h1>
+    <p class="hero-sub">
+      Ratatouille is CI/CD-integrated remote attestation deployed and managed automatically at scale.
+      Your platform is either <strong style="color:var(--green);font-weight:700">TRUSTED</strong> or it isn't.
+    </p>
+    <div class="hero-actions">
+      <a href="#how-it-works" class="btn btn-primary">
+        How It Works
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#contact" class="btn btn-secondary">Get Access</a>
+    </div>
+  </div>
+
+  <div class="fleet-wrap">
+    <div class="fleet-header">
+      <span id="fleet-trusted">— TRUSTED</span>
+      <span class="fleet-sep">·</span>
+      <span id="fleet-status">— VERIFYING</span>
+      <span class="fleet-sep">·</span>
+      <span class="fleet-meta">polling every ~10s</span>
+    </div>
+    <div class="fleet-grid" id="fleet-grid"></div>
+    <div class="fleet-fade"></div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="container">
+    <div class="problem-grid">
+      <div class="reveal">
+        <h2>Every security control you have<br />runs on top of a platform.<br /><span style="color:var(--green)">Is the platform clean?</span></h2>
+        <p class="problem-lead" style="margin-top:1.4rem;">
+          Firewalls, IAM, and EDR all run <strong>above the OS</strong> — which means they all
+          run on top of a kernel, a bootloader, and firmware that loaded before any of them started.
+          If that layer is tampered, your controls are operating on compromised ground.
+          The endpoint agent can't see it. The firewall can't block it. The audit didn't catch it.
+        </p>
+        <p class="problem-lead" style="margin-top:1rem;">
+          Silicon attestation is the only way to verify that layer — because it's the only
+          measurement that happens before the OS has a chance to lie about itself.
+        </p>
+      </div>
+      <div class="problem-cards reveal">
+        <div class="problem-card">
+          <div class="pico ico"><Fragment set:html={ico(CPU, 22)} /></div>
+          <h3>Firmware and bootloaders load first</h3>
+          <p>Your UEFI firmware, bootloader, and kernel execute before any agent you deployed. Compromise at that layer is invisible to everything running above it.</p>
+        </div>
+        <div class="problem-card">
+          <div class="pico ico"><Fragment set:html={ico(ALERT, 22)} /></div>
+          <h3>Software can't measure itself</h3>
+          <p>Any integrity check running in userspace is already owned if the OS beneath it is. The trust anchor has to be silicon — a TPM the software stack cannot alter or replay.</p>
+        </div>
+        <div class="problem-card">
+          <div class="pico ico"><Fragment set:html={ico(FILECK, 22)} /></div>
+          <h3>Compliance requires proof, not forms</h3>
+          <p>CJIS, FedRAMP, and SOC 2 require attesting that machines run approved software. Today that attestation is a human signing a document. Ratatouille makes it a cryptographic chain the relying party can verify independently.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPEN STANDARDS -->
+<section class="section-sm" id="standards">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">Open Standards</div>
+      <h2>Adopt remote attestation. Don't build it.</h2>
+      <p>Ratatouille is an integration layer over battle-tested, community-maintained open source tools. You get silicon-rooted attestation without developing or supporting the underlying system. The frameworks below handle the hard parts — Ratatouille makes them work together and wires them into your workflow.</p>
+    </div>
+    <div class="standards-grid">
+      <div class="std-card reveal">
+        <div class="std-icon"><Fragment set:html={ico(KEY, 28)} /></div>
+        <div class="std-name">Keylime</div>
+        <div class="std-desc">TPM-based remote attestation and IMA log verification. Open source, CNCF-hosted. The verifier engine that enforces your runtime policy against every TPM quote.</div>
+      </div>
+      <div class="std-card reveal">
+        <div class="std-icon"><Fragment set:html={ico(EDIT, 28)} /></div>
+        <div class="std-name">Sigstore / Cosign</div>
+        <div class="std-desc">Keyless policy signing — no long-lived keys to manage. Every policy approval is logged to Rekor: attributable to a specific authenticated identity, permanently auditable.</div>
+      </div>
+      <div class="std-card reveal">
+        <div class="std-icon"><Fragment set:html={ico(TERM, 28)} /></div>
+        <div class="std-name">Linux IMA</div>
+        <div class="std-desc">Kernel-level measurement of every ELF, module, and file executed since boot. Each measurement extends PCR 10 in the TPM — the OS cannot alter what IMA recorded.</div>
+      </div>
+      <div class="std-card reveal">
+        <div class="std-icon"><Fragment set:html={ico(NETWORK, 28)} /></div>
+        <div class="std-name">IETF RATS (RFC 9334)</div>
+        <div class="std-desc">The IETF standard defining Attester, Verifier, Relying Party, and Reference Value Provider. Ratatouille implements the background-check model against this spec.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Your device's chip doesn't lie. Everything above it can.</h2>
+      <p>When your silicon powers on, it starts measuring. Firmware, UEFI, bootloader, kernel — every stage extends a cryptographic accumulator in a tamper-resistant chip that the OS cannot reach. Ratatouille extends that chain forward: from where Secure Boot hands off, into every process running at runtime — turning passive silicon measurements into active policy enforcement.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon"><Fragment set:html={ico(LOCK)} /></div>
+        <h3>Extends Secure Boot</h3>
+        <p>Secure Boot verifies what starts. Ratatouille verifies what <em>runs</em>. The same silicon root — Endorsement Key burned in at manufacture, AIK registered at enrollment, PCR 10 accumulating every IMA measurement — extended to cover your live workload, not just boot.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><Fragment set:html={ico(ZAP)} /></div>
+        <h3>Continuous</h3>
+        <p>The verifier polls every agent every ~10 seconds with a fresh nonce. Replay attacks fail. A new unauthorized binary surfaces in under a poll cycle — not at the next quarterly audit.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><Fragment set:html={ico(GIT)} /></div>
+        <h3>CI/CD Integrated</h3>
+        <p>Policies are code. They live in your repo, go through PR review, and ship on your release cadence. Push a signed policy update and Ratatouille propagates it to the entire fleet — attestation changes follow software changes, automatically.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><Fragment set:html={ico(SERVER)} /></div>
+        <h3>Bare Metal, VMs, IoT</h3>
+        <p>Deploy the agent via Ansible, cloud-init, your package manager, or a provisioning image. Same attestation workflow whether you're managing three servers or three million edge devices.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><Fragment set:html={ico(SHIELD)} /></div>
+        <h3>Independently Verifiable</h3>
+        <p>The attestation evidence — TPM quotes, IMA logs, Sigstore bundles, Rekor entries — is yours. Any party can verify the chain without going through Ratatouille. No proprietary formats, no black boxes.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><Fragment set:html={ico(FILECK)} /></div>
+        <h3>Cryptographic Compliance</h3>
+        <p>Every attestation event is a signed, verifiable record. Compliance evidence is a TPM quote and a Rekor log entry — not a filled-out form or a screenshot of a dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="hiw-bg" id="how-it-works">
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="tag">How It Works</div>
+        <h2>From silicon to continuous trust</h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num active">01</div>
+          <h3>Enroll</h3>
+          <p>Install the agent on a device in a known-good state — via Ansible playbook, cloud-init user-data, package manager, provisioned image, or manually. The agent performs a TPM <code style="font-family:var(--mono);font-size:.8em;color:var(--green)">activate-credential</code> ceremony — EK to AIK, silicon identity confirmed.</p>
+          <div class="step-detail">ansible / cloud-init / apt / manual</div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">02</div>
+          <h3>Baseline</h3>
+          <p>IMA captures every binary measured since boot. Policy is built from what actually ran — not re-hashed from disk.</p>
+          <div class="step-detail">IMA log → runtime policy</div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">03</div>
+          <h3>Sign &amp; Push</h3>
+          <p>Sign the policy with cosign and push to Git. Ratatouille reads the push via webhook, verifies the Sigstore signature and Rekor log entry — unauthorized signers are rejected. Verified policy fans out automatically to every enrolled agent.</p>
+          <div class="step-detail">git push → webhook → fan-out</div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">04</div>
+          <h3>Verify</h3>
+          <p>Fresh nonce → TPM quote → PCR check → IMA log entries vs. policy. Every ~10 seconds. Any unknown binary fails immediately.</p>
+          <div class="step-detail">TPM quote → IMA verify → PCR</div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">05</div>
+          <h3>Act</h3>
+          <p>TRUSTED or FAILED, continuously. Wire to access control, secrets provisioning, incident alerting, or attestation token issuance.</p>
+          <div class="step-detail">TRUSTED / FAILED → downstream</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- USE CASES -->
+<section class="section" id="use-cases">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">Use Cases</div>
+      <h2>Three scenarios where this actually matters</h2>
+    </div>
+    <div class="usecases-grid">
+      <div class="usecase-card reveal">
+        <div class="usecase-label">Government &amp; Compliance</div>
+        <h3>CJIS / FedRAMP Access</h3>
+        <p>A police department connecting to the FBI CJIS database has to attest its machines run approved, unmodified software. Right now that's a human filling out a form. Ratatouille replaces the form with a TPM-rooted, Sigstore-signed, continuously-verified cryptographic proof.</p>
+        <div class="compliance-tags">
+          <span class="ctag">CJIS</span><span class="ctag">FedRAMP</span>
+          <span class="ctag">NIST 800-53</span><span class="ctag">DoD IL2–IL5</span><span class="ctag">SOC 2</span>
+        </div>
+      </div>
+      <div class="usecase-card reveal">
+        <div class="usecase-label">IoT &amp; Device Fleets</div>
+        <h3>Your Product Ships With a TPM</h3>
+        <p>Every firmware deviation, unauthorized binary, or unexpected module load — caught in seconds across the fleet. Define policy in Git, sign it, push it. Ratatouille fans it out. A million devices is the same workflow as ten.</p>
+        <div class="compliance-tags">
+          <span class="ctag">Fleet attestation</span><span class="ctag">OTA integrity</span>
+          <span class="ctag">IEC 62443</span><span class="ctag">SBOM enforcement</span>
+        </div>
+      </div>
+      <div class="usecase-card reveal">
+        <div class="usecase-label">Cloud &amp; Unowned Hardware</div>
+        <h3>You Don't Own the Hardware in the Cloud</h3>
+        <p>Cloud providers give you a VM. You have no visibility into the hypervisor below your workload. vTPMs give you a silicon-rooted measurement of the guest — what booted, what's running, what changed. Same workflow on bare metal, cloud VMs, and hybrid.</p>
+        <div class="compliance-tags">
+          <span class="ctag">Any cloud provider</span><span class="ctag">Hybrid cloud</span>
+          <span class="ctag">PCI DSS</span><span class="ctag">HIPAA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST CHAIN -->
+<div class="chain-bg">
+  <section class="section-sm">
+    <div class="container">
+      <div class="chain-intro reveal">
+        <div class="tag">Cryptographic Trust Chain</div>
+        <h2>Every link is independently verifiable.</h2>
+        <p>From the chip the manufacturer burned a key into, through to the relying party's access decision. You don't have to trust Ratatouille — you can verify each link yourself.</p>
+      </div>
+      <div class="chain-row reveal">
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(CPU, 16)} /></div><div class="chain-box-label">TPM Manufacturer</div><div class="chain-box-sub">Silicon root</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(KEYSMALL, 16)} /></div><div class="chain-box-label">EK</div><div class="chain-box-sub">Endorsement Key<br />burned in silicon</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(BADGE, 16)} /></div><div class="chain-box-label">AIK</div><div class="chain-box-sub">Attestation Identity<br />Key, registered</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(BARCHART, 16)} /></div><div class="chain-box-label">TPM Quote</div><div class="chain-box-sub">Signed PCR<br />snapshot + nonce</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(HASH, 16)} /></div><div class="chain-box-label">PCR 10</div><div class="chain-box-sub">Extends on every<br />IMA measurement</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(LIST, 16)} /></div><div class="chain-box-label">IMA Log</div><div class="chain-box-sub">Every ELF &amp; module<br />executed since boot</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(FILETXT, 16)} /></div><div class="chain-box-label">Runtime Policy</div><div class="chain-box-sub">Approved baseline<br />(GitOps, versioned)</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(EDITSMALL, 16)} /></div><div class="chain-box-label">Sigstore Sig</div><div class="chain-box-sub">Authorized identity<br />signed the policy</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(DATABASE, 16)} /></div><div class="chain-box-label">Rekor Log</div><div class="chain-box-sub">Public, immutable<br />transparency log</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(TICKET, 16)} /></div><div class="chain-box-label">Attest. Token</div><div class="chain-box-sub">Issued only when<br />all above pass</div></div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="chain-box" style="border-color:rgba(0,255,136,.3);box-shadow:0 0 18px rgba(0,255,136,.1)"><div class="chain-box-icon ico" style="color:var(--green)"><Fragment set:html={ico(BUILDING, 16)} /></div><div class="chain-box-label" style="color:var(--green)">Relying Party</div><div class="chain-box-sub">FBI, API gateway,<br />secrets vault</div></div></div>
+      </div>
+      <div class="chain-legend reveal">
+        <div class="chain-legend-item"><div class="chain-dot"></div> Silicon-enforced — cannot be forged in software</div>
+        <div class="chain-legend-item"><div class="chain-dot" style="background:#5ba3f5"></div> Cryptographically chained — tamper-evident</div>
+        <div class="chain-legend-item"><div class="chain-dot" style="background:#f5c842"></div> Publicly auditable — Rekor transparency log</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CTA -->
+<div style="background:var(--bg-surface);border-top:1px solid var(--border)">
+  <section class="cta-section" id="contact">
+    <div class="cta-glow"></div>
+    <div style="position:relative;z-index:1">
+      <div class="tag">Get Access</div>
+      <h2>Three servers or a million devices — same workflow.</h2>
+      <p>If you need to know what's actually running on your machines, reach out.</p>
+      <div class="cta-actions">
+        <a href="mailto:loganjsch@gmail.com" class="btn btn-primary">Get in Touch</a>
+        <a href="/esperanto_overview" class="btn btn-secondary">Read the Docs</a>
+      </div>
+      <div class="cta-email"><a href="mailto:loganjsch@gmail.com">loganjsch@gmail.com</a></div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo"><span class="rat">RAT</span><span class="rest">atouille</span></div>
+    <div class="footer-links">
+      <a href="/esperanto_overview">Docs</a>
+      <a href="/ra_overview">What is Remote Attestation?</a>
+      <a href="mailto:loganjsch@gmail.com">Contact</a>
+    </div>
+    <div class="footer-right"><span style="color:var(--green)">R</span>emote&nbsp;<span style="color:var(--green)">AT</span>Testation</div>
+  </div>
+</footer>
+
+<script>
+// ── Theme toggle ────────────────────────────────────────────
+const html   = document.documentElement;
+const toggle = document.getElementById('theme-toggle')!;
+const sun    = document.getElementById('icon-sun')!;
+const moon   = document.getElementById('icon-moon')!;
+
+function setTheme(light: boolean) {
+  html.setAttribute('data-theme', light ? 'light' : 'dark');
+  sun.style.display  = light ? 'block' : 'none';
+  moon.style.display = light ? 'none'  : 'block';
+  localStorage.setItem('theme', light ? 'light' : 'dark');
+}
+
+const saved = localStorage.getItem('theme');
+setTheme(saved === 'light');
+toggle.addEventListener('click', () => setTheme(html.getAttribute('data-theme') !== 'light'));
+
+// ── Fleet grid ──────────────────────────────────────────────
+const FLEET = 144;
+const grid  = document.getElementById('fleet-grid');
+const nodes: { el: HTMLElement; state: string }[] = [];
+
+for (let i = 0; i < FLEET; i++) {
+  const el = document.createElement('div');
+  el.className = 'fn trusted';
+  grid!.appendChild(el);
+  nodes.push({ el, state: 'trusted' });
+}
+
+function updateHeader() {
+  const failed    = nodes.filter(n => n.state === 'failed').length;
+  const verifying = nodes.filter(n => n.state === 'verifying').length;
+  const trusted   = FLEET - failed - verifying;
+  document.getElementById('fleet-trusted')!.textContent = trusted + ' TRUSTED';
+  const statusEl = document.getElementById('fleet-status')!;
+  if (failed > 0) {
+    statusEl.textContent = failed + ' FAILED';
+    statusEl.style.color = '#ff5050';
+  } else {
+    statusEl.textContent = verifying + ' VERIFYING';
+    statusEl.style.color = '#f5c43c';
+  }
+}
+
+function tick() {
+  const pool = nodes.filter(n => n.state === 'trusted');
+  if (!pool.length) return;
+  const node = pool[Math.floor(Math.random() * pool.length)];
+  node.state = 'verifying';
+  node.el.className = 'fn verifying';
+  updateHeader();
+  const fail = Math.random() < 0.06;
+  setTimeout(() => {
+    if (fail) {
+      node.state = 'failed';
+      node.el.className = 'fn failed';
+      updateHeader();
+      setTimeout(() => { node.state = 'trusted'; node.el.className = 'fn trusted'; updateHeader(); }, 2800 + Math.random() * 1800);
+    } else {
+      node.state = 'trusted';
+      node.el.className = 'fn trusted';
+      updateHeader();
+    }
+  }, 700 + Math.random() * 500);
+}
+
+updateHeader();
+nodes.forEach((n, i) => {
+  if (Math.random() < 0.08) {
+    n.state = 'verifying'; n.el.className = 'fn verifying';
+    setTimeout(() => { n.state = 'trusted'; n.el.className = 'fn trusted'; updateHeader(); }, 800 + i * 12);
+  }
+});
+setInterval(tick, 180);
+
+// ── Scroll reveal ───────────────────────────────────────────
+const obs = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); }),
+  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+);
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>

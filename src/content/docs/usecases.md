@@ -1,80 +1,90 @@
 ---
-title: Esperanto Use Cases
-description: How Esperanto helps you operationalize trust across products, platforms, and workloads.
+title: Use Cases
+description: How Ratatouille provides platform integrity for government compliance, IoT device fleets, cloud workloads, and more.
 ---
 
-Esperanto is designed as a **plug and play attestation engine**, whether you’re a large SaaS provider assuring millions of customers that their workloads run on uncompromised platforms, or a niche team running a compliance-heavy sensitive workflow that demands cryptographic proof of trust at every step.
+<a href="/" class="back-to-site">← ratatouille.dev</a>
 
-### Use Cases
-
-#### 1. SaaS & Enterprise Platforms
-
-If you’re delivering a SaaS or enterprise solution — whether in data analytics, AI, or security — Esperanto lets you prove to customers that their data is both **secure against threats** and **private from platform operators**.
-
-Esperanto gives your customers an additional layer of assurance: their workloads aren’t just “running in the cloud,” they’re running in cryptographically attested, trusted environments.
+Ratatouille is designed for teams that need **verifiable proof of what's running** —
+not just a policy document, but a cryptographic chain from hardware to runtime.
+The specific compliance framework or scale doesn't matter. If you need to prove integrity, Ratatouille covers it.
 
 ---
 
-#### 2. Simplifying TEEs & Breaking Vendor Lock
+## Government & Regulated Access (CJIS, FedRAMP, DoD)
 
-TEEs (Trusted Execution Environments) are powerful, but managing them across Intel, AMD, and ARM can be complex and create **vendor lock-in**.
+**The scenario:** A police department needs to connect to the FBI CJIS database.
+Current process: fill out a form attesting that the connecting machine is running approved software.
+The FBI trusts that form. A human signed it.
 
-Esperanto abstracts this fragmentation, unifying attestation policies across providers. You get the benefits of TEEs without being tied to one vendor’s ecosystem.
+**The problem:** That's not a verifiable claim. If the machine was compromised between the audit
+and the connection, no one knows. The relying party (FBI system) has no way to verify independently.
 
----
+**What Ratatouille provides:** A cryptographic attestation chain rooted in the machine's TPM hardware, with continuous verification that the machine is running the approved policy — not just at enrollment, but right now. The relying party receives an attestation token it can verify independently, without trusting a human intermediary. Policy records are signed via Sigstore and backed by the Rekor transparency log, producing auditor-ready evidence.
 
-#### 3. Edge Devices with Sensitive Workloads
-
-When devices at the edge are part of your sensitive data workflow, you must have assurance that those platforms are uncompromised.
-
-For example:
-
-- Attesting a device before sending it an API key or database connection string from a secrets vault.
-- Protecting remote data collection endpoints from tampering.
-
-Esperanto ensures your edge platforms can **cryptographically prove their trustworthiness** before becoming part of your workflow.
+**Relevant frameworks:** CJIS, FedRAMP (IL2–IL5), NIST 800-53 (SI-7, SC-28), DoD IL2–IL5, SOC 2 Type II
 
 ---
 
-#### 4. Compliance & Audit Evidence
+## IoT & Device Fleets
 
-Esperanto provides portable, cryptographic attestation evidence that can be shown to auditors or regulators in regulated indsutries, making frameworks easier to satisfy.
+**The scenario:** Your product ships with an embedded TPM. You manage a fleet — maybe thousands of
+devices in the field, maybe millions of endpoints. Firmware updates happen regularly. You need to
+know that every device is running what you shipped, not a tampered or outdated version.
 
-- **FedRAMP / DoD IL2–IL5:** Workloads must run in **trusted, controlled environments**. RA provides cryptographic proof that VMs, containers, or hardware are uncompromised.
-- **PCI DSS / HIPAA:** Sensitive data must be processed in **secure, validated environments**. RA shows that environments handling cardholder or PHI data are isolated and trustworthy.
-- **GDPR / CCPA:** Organizations must implement **appropriate technical measures** to protect personal data. RA in TEEs demonstrates **data-in-use confidentiality**, aiding compliance with integrity and privacy obligations.
-- **NIST 800-53 / Critical Infrastructure:** Controls like SI-7 and SC-28 require workloads to run in **verifiable, uncompromised states**. RA produces cryptographic evidence to satisfy these controls.
+**The problem:** Traditional fleet management tells you what you pushed. It doesn't tell you what's
+actually *running*. A supply chain compromise, a tampered update, or a persistent implant shows up
+in the IMA log — but only if you're measuring it.
 
-> RA does not replaceautomatically satisfy compliance obligations, but it offers a practical, verifiable mechanism to show that workloads are running in trusted, uncompromised environments. This may simplify your audits for cloud, edge, or hybrid deployments.
+**What Ratatouille provides:** Fleet-scale attestation — enroll devices once, and Ratatouille tracks state continuously across all of them. Policy updates happen via GitOps: sign a new runtime policy, push to Git, and it fans out to every enrolled device automatically. Any new unmeasured binary triggers an attestation failure within seconds. The same workflow and API scales from 10 devices to millions.
 
----
-
-#### 5. Multi-Cloud & Hybrid Workloads Confidnetial Compute
-
-Workloads often span AWS, Azure, GCP, on-prem, and edge environments. Each has its own attestation system, which creates complexity.  
-Esperanto acts as a **single fabric for attestation**, letting you enforce one consistent trust policy across all providers and avoid cloud lock-in.
+**Relevant use cases:** OTA update integrity, firmware tamper detection, supply chain verification,
+IEC 62443 (industrial IoT), embedded product security
 
 ---
 
-#### 6. Data Collaboration & Clean Rooms
+## Cloud & Unowned Infrastructure
 
-In modern analytics and research, multiple organizations want to compute over sensitive shared data without exposing it.  
-Esperanto enables privacy-preserving collaboration by proving that workloads run only in trusted environments.  
-Examples:
+**The scenario:** You're running workloads on AWS, GCP, Azure, or a hybrid mix. You don't own the
+hardware. You can't physically inspect the host. The hypervisor is the cloud provider's.
+
+**The problem:** Traditional integrity checking assumes you trust the platform it's running on.
+If the hypervisor is compromised, any agent running in the guest VM is already owned.
+TPM-based attestation provides a measurement layer that the guest can verify, independent of the host OS.
+
+**What Ratatouille provides:** vTPM attestation for cloud VMs using the same Keylime workflow and IMA measurement chain as physical hardware. A single policy engine enforces consistent baselines across AWS, GCP, Azure, and on-prem — one signed policy applies everywhere, eliminating per-cloud fragmentation. If your golden AMI drifts from its approved state, you know within 10 seconds.
+
+**Relevant frameworks:** PCI DSS, HIPAA, GDPR/CCPA (data-in-use protection), SOC 2
 
 ---
 
-### The Bigger Picture
+## Secrets & Credential Provisioning
 
-Esperanto is the connective layer of **platform trust**.
+**The scenario:** At startup, a workload needs secrets — database credentials, API keys, TLS private keys,
+model weights. You want to ensure those secrets only land on machines that are in a verified state.
 
-Whether it’s:
+**The problem:** If a secrets vault releases credentials based on identity alone (mTLS cert, IAM role),
+a compromised OS or container runtime can exfiltrate them via memory scraping or privileged injection.
+RA gates the release on platform state, not just identity.
 
-- **A SaaS startup** proving customer workloads are private from cloud providers,
-- **A financial institution** generating compliance-ready trust evidence,
-- **A healthcare system** protecting sensitive patient data,
-- **A multi-cloud deployment** enforcing consistent attestation policies,
-- **A data collaboration platform** ensuring privacy in shared computations,
-- Or **a DevOps team** attesting containers running on AWS Nitro Enclaves,
+**What Ratatouille provides:** An attestation token issued only after full chain verification — from hardware through IMA log through policy through Sigstore. A relying party (vault, API gateway, HSM) consumes the token as a precondition for secret release. If platform state changes after issuance, the token can be invalidated, providing continuous revocation tied to live machine state.
 
-Esperanto operationalizes remote attestation as a standard, verifiable part of your platform.
+---
+
+## Confidential Compute Providers
+
+**The scenario:** You operate a multi-tenant platform and your customers need assurance that their
+workloads are running on uncompromised infrastructure — not just "in the cloud," but verifiably
+isolated and running exactly the approved code.
+
+**What Ratatouille provides:** Customer-verifiable attestation evidence — tenants don't have to take the operator's word for it. Ratatouille supports TEE platforms (SGX, SEV-SNP, TrustZone) where remote attestation is the mechanism that enables trust, and abstracts across Intel, AMD, and ARM hardware with a single consistent policy model and no vendor lock-in.
+
+---
+
+## What Ratatouille is not
+
+Ratatouille is not a silver bullet. It won't stop phishing, patch management failures, or application-layer vulnerabilities — it specifically addresses *deep platform compromise*: firmware, kernel, and runtime binary tampering that sits below your application security stack.
+
+It is also not a replacement for existing controls. Ratatouille adds a hardware-rooted integrity layer on top of network security, IAM, and endpoint monitoring, not instead of them.
+
+Finally, it is not periodic. The verifier runs every ~10 seconds, giving you a continuous signal rather than an annual attestation checkbox.

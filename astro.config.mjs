@@ -2,47 +2,55 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// https://astro.build/config
 export default defineConfig({
-	integrations: [
-		starlight({
-			title: 'Ratatouille',
-			customCss: [
-				// Relative path to your custom CSS file
-				'./src/styles/custom.css',
-			],
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
-			sidebar: [
-				{ 
-					label: 'Overview', slug: 'esperanto_overview' 
-				},
-				{ 
-					label: 'Remote Attestation', slug: 'ra_overview' 
-				},
-				{
-					label: 'Usecases', slug: 'usecases' 
-				},
-				{ 
-					label: 'Demo', slug: 'demo' 
-				},
-				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Quickstart Guide', slug: 'guides/quickstart' },
-					],
-				},
-				{
-					label: 'Reference',
-					items: [
-						{ label: 'Policies', slug: 'reference/policies' },
-						{ label: 'ref1', slug: 'reference/ref1' },
-						{ label: 'ref2', slug: 'reference/trust' },
-						{ label: 'rats', slug: 'reference/rats' },
-
-					]
-				},
-			],
-		}),
-	],
+  integrations: [
+    starlight({
+      title: '🐀 Ratatouille',
+      description: 'Continuous TPM-backed platform integrity attestation. Platform Trust at Any Scale.',
+      customCss: ['./src/styles/custom.css'],
+      social: [
+        { icon: 'email', label: 'Contact', href: 'mailto:loganjsch@gmail.com' },
+      ],
+      head: [
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'theme-color',
+            content: '#070c0a',
+          },
+        },
+      ],
+      sidebar: [
+        {
+          label: 'Overview',
+          items: [
+            { label: '← Back to ratatouille.dev', link: '/' },
+            { label: 'What is Ratatouille?', slug: 'esperanto_overview' },
+            { label: 'Remote Attestation Primer', slug: 'ra_overview' },
+            { label: 'Use Cases', slug: 'usecases' },
+          ],
+        },
+        {
+          label: 'Getting Started',
+          items: [
+            { label: 'Quickstart Guide', slug: 'guides/quickstart' },
+          ],
+        },
+        {
+          label: 'Demo',
+          items: [
+            { label: 'Live Demo Walkthrough', slug: 'demo' },
+          ],
+        },
+        {
+          label: 'Reference',
+          items: [
+            { label: 'Runtime Policies', slug: 'reference/policies' },
+            { label: 'Trust & Attestation', slug: 'reference/trust' },
+            { label: 'RATS Framework', slug: 'reference/rats' },
+          ],
+        },
+      ],
+    }),
+  ],
 });

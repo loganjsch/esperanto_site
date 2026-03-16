@@ -1,29 +1,74 @@
-/* Dark mode colors. */
+/* ── Brand tokens ────────────────────────────────────────── */
 :root {
-	--sl-color-accent-low: #002d12;
-	--sl-color-accent: #10d673;
-	--sl-color-accent-high: #9cdaac;
-	--sl-color-white: #ffffff;
-	--sl-color-gray-1: #eaf0e8;
-	--sl-color-gray-2: #bdc4bb;
-	--sl-color-gray-3: #82907f;
-	--sl-color-gray-4: #4f5c4d;
-	--sl-color-gray-5: #303c2d;
-	--sl-color-gray-6: #1f2a1c;
-	--sl-color-black: #151a13;
+  --sl-color-accent-low:  #002d12;
+  --sl-color-accent:      #10d673;
+  --sl-color-accent-high: #7ed4a4;
+  --sl-color-white:       #ffffff;
+  --sl-color-gray-1:      #e4ede8;
+  --sl-color-gray-2:      #b0c4b8;
+  --sl-color-gray-3:      #6d9480;
+  --sl-color-gray-4:      #3e5c4a;
+  --sl-color-gray-5:      #233529;
+  --sl-color-gray-6:      #141e18;
+  --sl-color-black:       #0a0f0c;
 }
-/* Light mode colors. */
 :root[data-theme='light'] {
-	--sl-color-accent-low: #b7e4c1;
-	--sl-color-accent: #10d673;
-	--sl-color-accent-high: #003e1b;
-	--sl-color-white: #151a13;
-	--sl-color-gray-1: #1f2a1c;
-	--sl-color-gray-2: #303c2d;
-	--sl-color-gray-3: #4f5c4d;
-	--sl-color-gray-4: #82907f;
-	--sl-color-gray-5: #bdc4bb;
-	--sl-color-gray-6: #eaf0e8;
-	--sl-color-gray-7: #f4f7f3;
-	--sl-color-black: #ffffff;
+  --sl-color-accent-low:  #b7e4c7;
+  --sl-color-accent:      #0ba85a;
+  --sl-color-accent-high: #004020;
+  --sl-color-white:       #0a0f0c;
+  --sl-color-gray-1:      #141e18;
+  --sl-color-gray-2:      #233529;
+  --sl-color-gray-3:      #3e5c4a;
+  --sl-color-gray-4:      #6d9480;
+  --sl-color-gray-5:      #b0c4b8;
+  --sl-color-gray-6:      #e4ede8;
+  --sl-color-gray-7:      #f3f8f5;
+  --sl-color-black:       #ffffff;
+}
+
+/* ── Font ─────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --sl-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --sl-font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+}
+
+/* ── Site title — show the rat ───────────────────────────── */
+.site-title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ── Code blocks ─────────────────────────────────────────── */
+code {
+  font-family: var(--sl-font-mono) !important;
+  font-size: 0.85em !important;
+}
+
+/* ── Hero page refinements ───────────────────────────────── */
+.hero > .hero-html,
+.sl-markdown-content h1:first-child {
+  letter-spacing: -0.02em;
+}
+
+/* ── Back-link to marketing site ─────────────────────────── */
+.sl-markdown-content .back-to-site {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--sl-color-accent);
+  border: 1px solid var(--sl-color-accent-low);
+  border-radius: 6px;
+  padding: 5px 12px;
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+  font-family: var(--sl-font-mono);
+}
+
+/* ── Callout tweaks ──────────────────────────────────────── */
+.starlight-aside {
+  border-radius: 8px !important;
 }

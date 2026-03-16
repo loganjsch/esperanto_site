@@ -1,37 +1,43 @@
 ---
-title: Ratatouille
-description: Ratatouille Docs.
+title: Ratatouille Docs
+description: Continuous TPM-backed platform integrity attestation — documentation and reference.
 template: splash
 hero:
-  tagline: Platform Trust at Any Scale
-  image:
-    file: ../../assets/esperanto_the_rat.png
+  tagline: "Continuous platform integrity attestation — from TPM hardware to runtime enforcement."
   actions:
-    - text: Docs
+    - text: What is Ratatouille?
       link: /esperanto_overview
       icon: right-arrow
+      variant: primary
+    - text: Remote Attestation Primer
+      link: /ra_overview
+      icon: open-book
+      variant: minimal
 ---
 
-## The Scenario…
+import { Card, CardGrid } from '@astrojs/starlight/components';
 
-Verifiable platform trust is no longer optional.
+## Quick navigation
 
-Whether you're a business running your services on someone else's cloud, or an enterprise building a security and compliance baseline across your IoT fleet, you need a way to prove the integrity of your workloads down to the hardware.
-
-Manually attesting even a single platform at scale is complicated. When you have multiple platforms and environments—each with its own security scheme—it becomes an inconsistent, fragmented, and unscalable operational nightmare.
+<CardGrid>
+  <Card title="What is Ratatouille?" icon="information">
+    Learn what the platform does, why it exists, and how it fits your infrastructure.
+    [Read the overview →](/esperanto_overview)
+  </Card>
+  <Card title="Remote Attestation Primer" icon="document">
+    New to TPMs and remote attestation? Start here for background on the technology.
+    [Learn the fundamentals →](/ra_overview)
+  </Card>
+  <Card title="Use Cases" icon="list-format">
+    CJIS compliance, IoT device fleets, cloud workload integrity — see where Ratatouille fits.
+    [Explore use cases →](/usecases)
+  </Card>
+  <Card title="Quickstart Guide" icon="rocket">
+    Enroll your first machine, generate a baseline policy, and see live attestation in minutes.
+    [Get started →](/guides/quickstart)
+  </Card>
+</CardGrid>
 
 ---
 
-## What Ratatouille Does
-
-Ratatouille makes it practical to deploy RATS-based trust across your infrastructure. Provides a system to let you define, distribute, and continuously enforce trusted execution policies across your infrastructure without having to integrate or manage the underlying attestation components or logic yourself.
-
-## See It in Action
-
-Ratatouille is in **development** — while the demo is a proof of concept and demonstration of use, it is **currently** wildly insecure, bloated, and probably very buggy.
-
-[See the Docs & Demo](/esperanto_overview)
-
----
-
-Email **loganjsch@gmail.com** for feedback, questions, concerns, interest, insults....
+**Questions or early access requests:** [loganjsch@gmail.com](mailto:loganjsch@gmail.com)
