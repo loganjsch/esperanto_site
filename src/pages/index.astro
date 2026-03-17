@@ -421,10 +421,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     <div class="hero-eyebrow">
       <span style="color:var(--green);font-weight:800">R</span>emote&nbsp;<span style="color:var(--green);font-weight:800">AT</span>Testation&thinsp;→&thinsp;<span style="color:var(--green);font-weight:800">RAT</span>atouille
     </div>
-    <h1>
-      What's actually running<br />
-      on your machines <em>right now?</em>
-    </h1>
+    <h1>Platform integrity <br />you can<br /><em>prove.</em></h1>
     <p class="hero-sub">
       Ratatouille is CI/CD-integrated remote attestation deployed and managed automatically at scale.
       Your platform is either <strong style="color:var(--green);font-weight:700">TRUSTED</strong> or it isn't.
@@ -458,23 +455,22 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
   <div class="container">
     <div class="problem-grid">
       <div class="reveal">
-        <h2>Every security control you have<br />runs on top of a platform.<br /><span style="color:var(--green)">Is the platform clean?</span></h2>
+        <h2>Your security controls run on top of a system you've never verified.</h2>
         <p class="problem-lead" style="margin-top:1.4rem;">
-          Firewalls, IAM, and EDR all run <strong>above the OS</strong> — which means they all
+          Firewalls, IAM, and EDR all run in <strong>user space,</strong> which means they all
           run on top of a kernel, a bootloader, and firmware that loaded before any of them started.
           If that layer is tampered, your controls are operating on compromised ground.
-          The endpoint agent can't see it. The firewall can't block it. The audit didn't catch it.
         </p>
         <p class="problem-lead" style="margin-top:1rem;">
-          Silicon attestation is the only way to verify that layer — because it's the only
-          measurement that happens before the OS has a chance to lie about itself.
+          Hardware attestation is the only way to verify that layer — because it's the only
+          measurement that anchors itself before the OS has a chance to lie about itself.
         </p>
       </div>
       <div class="problem-cards reveal">
         <div class="problem-card">
           <div class="pico ico"><Fragment set:html={ico(CPU, 22)} /></div>
           <h3>Firmware and bootloaders load first</h3>
-          <p>Your UEFI firmware, bootloader, and kernel execute before any agent you deployed. Compromise at that layer is invisible to everything running above it.</p>
+          <p>Your UEFI firmware, bootloader, and kernel execute before any agent you deployed. Firmware implants, bootkits, and tampered kernel modules are all invisible to everything running above it.</p>
         </div>
         <div class="problem-card">
           <div class="pico ico"><Fragment set:html={ico(ALERT, 22)} /></div>
@@ -497,76 +493,34 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     <div class="section-header reveal">
       <div class="tag">Open Standards</div>
       <h2>Adopt remote attestation. Don't build it.</h2>
-      <p>Ratatouille is an integration layer over battle-tested, community-maintained open source tools. You get silicon-rooted attestation without developing or supporting the underlying system. The frameworks below handle the hard parts — Ratatouille makes them work together and wires them into your workflow.</p>
+      <p>Ratatouille is an integration layer over tested, community-maintained open source tools. You get hardware-rooted attestation without developing or supporting the underlying system. Ratatouille integrates...</p>
     </div>
     <div class="standards-grid">
       <div class="std-card reveal">
         <div class="std-icon"><Fragment set:html={ico(KEY, 28)} /></div>
         <div class="std-name">Keylime</div>
-        <div class="std-desc">TPM-based remote attestation and IMA log verification. Open source, CNCF-hosted. The verifier engine that enforces your runtime policy against every TPM quote.</div>
+        <div class="std-desc">TPM-based remote attestation and IMA log verification engine. Open source, CNCF-hosted.</div>
       </div>
       <div class="std-card reveal">
         <div class="std-icon"><Fragment set:html={ico(EDIT, 28)} /></div>
         <div class="std-name">Sigstore / Cosign</div>
-        <div class="std-desc">Keyless policy signing — no long-lived keys to manage. Every policy approval is logged to Rekor: attributable to a specific authenticated identity, permanently auditable.</div>
+        <div class="std-desc">Keyless policy signing with no long-lived keys to manage. Every policy approval is attributable to a specific authenticated identity and permanently auditable.</div>
       </div>
       <div class="std-card reveal">
         <div class="std-icon"><Fragment set:html={ico(TERM, 28)} /></div>
         <div class="std-name">Linux IMA</div>
-        <div class="std-desc">Kernel-level measurement of every ELF, module, and file executed since boot. Each measurement extends PCR 10 in the TPM — the OS cannot alter what IMA recorded.</div>
+        <div class="std-desc">Kernel-level measurement of modules and executbales as they load. The OS cannot alter what IMA recorded.</div>
       </div>
       <div class="std-card reveal">
         <div class="std-icon"><Fragment set:html={ico(NETWORK, 28)} /></div>
         <div class="std-name">IETF RATS (RFC 9334)</div>
-        <div class="std-desc">The IETF standard defining Attester, Verifier, Relying Party, and Reference Value Provider. Ratatouille implements the background-check model against this spec.</div>
+        <div class="std-desc">The IETF standard defining remote attestation best practices. Ratatouille implements the background-check model against this spec.</div>
       </div>
     </div>
   </div>
 </section>
 
 <hr class="divider" />
-
-<!-- FEATURES -->
-<section class="section" id="features">
-  <div class="container">
-    <div class="section-header reveal">
-      <h2>Your device's chip doesn't lie. Everything above it can.</h2>
-      <p>When your silicon powers on, it starts measuring. Firmware, UEFI, bootloader, kernel — every stage extends a cryptographic accumulator in a tamper-resistant chip that the OS cannot reach. Ratatouille extends that chain forward: from where Secure Boot hands off, into every process running at runtime — turning passive silicon measurements into active policy enforcement.</p>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card reveal">
-        <div class="feature-icon"><Fragment set:html={ico(LOCK)} /></div>
-        <h3>Extends Secure Boot</h3>
-        <p>Secure Boot verifies what starts. Ratatouille verifies what <em>runs</em>. The same silicon root — Endorsement Key burned in at manufacture, AIK registered at enrollment, PCR 10 accumulating every IMA measurement — extended to cover your live workload, not just boot.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon"><Fragment set:html={ico(ZAP)} /></div>
-        <h3>Continuous</h3>
-        <p>The verifier polls every agent every ~10 seconds with a fresh nonce. Replay attacks fail. A new unauthorized binary surfaces in under a poll cycle — not at the next quarterly audit.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon"><Fragment set:html={ico(GIT)} /></div>
-        <h3>CI/CD Integrated</h3>
-        <p>Policies are code. They live in your repo, go through PR review, and ship on your release cadence. Push a signed policy update and Ratatouille propagates it to the entire fleet — attestation changes follow software changes, automatically.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon"><Fragment set:html={ico(SERVER)} /></div>
-        <h3>Bare Metal, VMs, IoT</h3>
-        <p>Deploy the agent via Ansible, cloud-init, your package manager, or a provisioning image. Same attestation workflow whether you're managing three servers or three million edge devices.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon"><Fragment set:html={ico(SHIELD)} /></div>
-        <h3>Independently Verifiable</h3>
-        <p>The attestation evidence — TPM quotes, IMA logs, Sigstore bundles, Rekor entries — is yours. Any party can verify the chain without going through Ratatouille. No proprietary formats, no black boxes.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon"><Fragment set:html={ico(FILECK)} /></div>
-        <h3>Cryptographic Compliance</h3>
-        <p>Every attestation event is a signed, verifiable record. Compliance evidence is a TPM quote and a Rekor log entry — not a filled-out form or a screenshot of a dashboard.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- HOW IT WORKS -->
 <div class="hiw-bg" id="how-it-works">
@@ -580,25 +534,25 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
         <div class="step reveal">
           <div class="step-num active">01</div>
           <h3>Enroll</h3>
-          <p>Install the agent on a device in a known-good state — via Ansible playbook, cloud-init user-data, package manager, provisioned image, or manually. The agent performs a TPM <code style="font-family:var(--mono);font-size:.8em;color:var(--green)">activate-credential</code> ceremony — EK to AIK, silicon identity confirmed.</p>
+          <p>Install the agent on a device in a known-good state. The agent performs a TPM <code style="font-family:var(--mono);font-size:.8em;color:var(--green)">activate-credential</code> ceremony confirming hardware identity.</p>
           <div class="step-detail">ansible / cloud-init / apt / manual</div>
         </div>
         <div class="step reveal">
           <div class="step-num">02</div>
           <h3>Baseline</h3>
-          <p>IMA captures every binary measured since boot. Policy is built from what actually ran — not re-hashed from disk.</p>
+          <p>IMA captures every modules and executables loaded since boot. Policy is built from what actually ran, not re-hashed from disk.</p>
           <div class="step-detail">IMA log → runtime policy</div>
         </div>
         <div class="step reveal">
           <div class="step-num">03</div>
           <h3>Sign &amp; Push</h3>
-          <p>Sign the policy with cosign and push to Git. Ratatouille reads the push via webhook, verifies the Sigstore signature and Rekor log entry — unauthorized signers are rejected. Verified policy fans out automatically to every enrolled agent.</p>
+          <p>Sign the policy with cosign and push to Git. Ratatouille reads and verifies the Sigstore signature and Rekor log entry. Unauthorized signers are rejected, and verified policy fans out your devices.</p>
           <div class="step-detail">git push → webhook → fan-out</div>
         </div>
         <div class="step reveal">
           <div class="step-num">04</div>
           <h3>Verify</h3>
-          <p>Fresh nonce → TPM quote → PCR check → IMA log entries vs. policy. Every ~10 seconds. Any unknown binary fails immediately.</p>
+          <p>Fresh nonce + TPM quote + PCR check + IMA log entries vs. policy. Set your interval, and any unknown binary fails immediately.</p>
           <div class="step-detail">TPM quote → IMA verify → PCR</div>
         </div>
         <div class="step reveal">
