@@ -251,18 +251,32 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     .ico-muted { color: var(--text-muted); }
 
     /* ── PROBLEM ── */
-    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
     .problem-lead { font-size: 1.05rem; line-height: 1.8; }
     .problem-lead strong { color: var(--text); }
-    .problem-cards { display: flex; flex-direction: column; gap: 14px; }
-    .problem-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--r-lg); padding: 22px 24px; transition: border-color .2s;
+    .trust-chain {
+      display: flex; flex-direction: column;
+      border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden;
     }
-    .problem-card:hover { border-color: var(--border-bright); }
-    .problem-card .pico { margin-bottom: 12px; }
-    .problem-card h3 { font-size: 0.92rem; color: var(--text); margin-bottom: 6px; }
-    .problem-card p  { font-size: 0.85rem; line-height: 1.65; }
+    .chain-layer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.1rem;
+      border-left: 2px solid transparent;
+      border-bottom: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .chain-layer:last-child { border-bottom: none; }
+    .chain-layer:nth-child(1) { border-left-color: rgba(0,255,136,0.25); }
+    .chain-layer:nth-child(2) { border-left-color: rgba(0,255,136,0.38); background: rgba(0,255,136,0.015); }
+    .chain-layer:nth-child(3) { border-left-color: rgba(0,255,136,0.55); background: rgba(0,255,136,0.025); }
+    .chain-layer:nth-child(4) { border-left-color: rgba(0,255,136,0.72); background: rgba(0,255,136,0.035); }
+    .chain-root {
+      border-left: 3px solid var(--green) !important;
+      background: rgba(0,255,136,0.06) !important;
+    }
+    .chain-name { font-size: 0.87rem; font-weight: 500; color: var(--text); }
+    .chain-root .chain-name { color: var(--green); font-weight: 600; }
+    .chain-root-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); opacity: 0.6; }
 
     /* ── FEATURES ── */
     .section-header { text-align: center; max-width: 640px; margin: 0 auto 64px; }
@@ -427,7 +441,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       Your platform is either <strong style="color:var(--green);font-weight:700">TRUSTED</strong> or it isn't.
     </p>
     <div class="hero-actions">
-      <a href="#how-it-works" class="btn btn-primary">
+      <a href="#standards" class="btn btn-primary">
         How It Works
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -462,25 +476,26 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
           If that layer is tampered, your controls are operating on compromised ground.
         </p>
         <p class="problem-lead" style="margin-top:1rem;">
-          Hardware attestation is the only way to verify that layer — because it's the only
+          Hardware attestation is the only way to verify that layer. It's the only
           measurement that anchors itself before the OS has a chance to lie about itself.
         </p>
       </div>
-      <div class="problem-cards reveal">
-        <div class="problem-card">
-          <div class="pico ico"><Fragment set:html={ico(CPU, 22)} /></div>
-          <h3>Firmware and bootloaders load first</h3>
-          <p>Your UEFI firmware, bootloader, and kernel execute before any agent you deployed. Firmware implants, bootkits, and tampered kernel modules are all invisible to everything running above it.</p>
+      <div class="trust-chain reveal">
+        <div class="chain-layer">
+          <span class="chain-name">Applications</span>
         </div>
-        <div class="problem-card">
-          <div class="pico ico"><Fragment set:html={ico(ALERT, 22)} /></div>
-          <h3>Software can't measure itself</h3>
-          <p>Any integrity check running in userspace is already owned if the OS beneath it is. The trust anchor has to be silicon — a TPM the software stack cannot alter or replay.</p>
+        <div class="chain-layer">
+          <span class="chain-name">Kernel</span>
         </div>
-        <div class="problem-card">
-          <div class="pico ico"><Fragment set:html={ico(FILECK, 22)} /></div>
-          <h3>Compliance requires proof, not forms</h3>
-          <p>CJIS, FedRAMP, and SOC 2 require attesting that machines run approved software. Today that attestation is a human signing a document. Ratatouille makes it a cryptographic chain the relying party can verify independently.</p>
+        <div class="chain-layer">
+          <span class="chain-name">Bootloader</span>
+        </div>
+        <div class="chain-layer">
+          <span class="chain-name">UEFI Firmware</span>
+        </div>
+        <div class="chain-layer chain-root">
+          <span class="chain-name">Silicon &nbsp;·&nbsp; TPM</span>
+          <span class="chain-root-label">trust root</span>
         </div>
       </div>
     </div>
@@ -492,8 +507,8 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
   <div class="container">
     <div class="section-header reveal">
       <div class="tag">Open Standards</div>
-      <h2>Adopt remote attestation. Don't build it.</h2>
-      <p>Ratatouille is an integration layer over tested, community-maintained open source tools. You get hardware-rooted attestation without developing or supporting the underlying system. Ratatouille integrates...</p>
+      <h2>Adopt remote attestation. Don't rebuild it.</h2>
+      <p>Ratatouille is an integration layer over proven, community-maintained open source tools. You get hardware-rooted attestation without developing or supporting the underlying system. Ratatouille integrates...</p>
     </div>
     <div class="standards-grid">
       <div class="std-card reveal">
