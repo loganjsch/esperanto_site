@@ -42,16 +42,16 @@ and starts it. The agent performs the TPM2 **activate-credential** ceremony:
 
 1. Agent generates an AIK (Attestation Identity Key) and presents its EK certificate
 2. The registrar issues an encrypted challenge that only the TPM can decrypt
-3. Agent decrypts it using the TPM — hardware identity confirmed
+3. Agent decrypts it using the TPM, confirming hardware identity
 
 The agent then sends its full IMA measurement log to Ratatouille Core.
 
 ### 3. Ratatouille generates the baseline policy
 
-Core calls Keylime's `create_policy.py` against the IMA log — building a runtime policy
+Core calls Keylime's `create_policy.py` against the IMA log, building a runtime policy
 from TPM-measured values (not re-hashed from disk). The policy is stored as `Baseline::<group_name>`.
 
-**The agent now appears in the UI with status: `provisioning`** — it has an identity and a baseline,
+**The agent now appears in the UI with status: `provisioning`.** It has an identity and a baseline,
 but no active signed policy has been pushed yet.
 
 ---
@@ -91,7 +91,7 @@ git push
 Ratatouille's GitHub webhook fires:
 - HMAC-SHA256 signature verified on the raw payload body
 - Policy and bundle fetched from the commit SHA via GitHub API
-- Sigstore bundle verified — invalid signature or untrusted signer → rejected
+- Sigstore bundle verified (invalid signature or untrusted signer → rejected)
 - Policy stored in DB, `active_policy_id` updated on the group
 - `keylime_tenant -c add` runs for every enrolled agent
 
@@ -122,7 +122,7 @@ Each cycle:
 
 :::note[Important]
 Shell scripts alone won't trigger this. The interpreter (`bash`) is measured, not the script content.
-You need a compiled ELF binary — one that IMA has never seen before.
+You need a compiled ELF binary, one that IMA has never seen before.
 :::
 
 **On the attested machine:**
@@ -172,7 +172,7 @@ to the verifier. Attestation resumes with the new policy. Agent flips back to `a
 
 :::tip[The GitOps security model]
 The policy update had to be **signed by an authorized identity** and pass Sigstore verification.
-An attacker who compromises the machine cannot update the policy — only an authorized principal
+An attacker who compromises the machine cannot update the policy. Only an authorized principal
 with access to the signing identity can approve new binaries.
 :::
 
@@ -180,7 +180,7 @@ with access to the signing identity can approve new binaries.
 
 ## What you just saw
 
-Enrollment established TPM hardware identity via the activate-credential ceremony. Baseline generation measured every binary running at that moment via IMA and captured the result as the approved policy. The policy push verified the Sigstore signature, checked the Rekor log, and fanned the policy out to the agent. During continuous polling, the verifier checked the TPM quote and IMA log every 10 seconds against that policy. When a new ELF binary appeared, attestation failed within one poll cycle. Recovery was a signed Git push — the updated policy was verified and enforced automatically.
+Enrollment established TPM hardware identity via the activate-credential ceremony. Baseline generation measured every binary running at that moment via IMA and captured the result as the approved policy. The policy push verified the Sigstore signature, checked the Rekor log, and fanned the policy out to the agent. During continuous polling, the verifier checked the TPM quote and IMA log every 10 seconds against that policy. When a new ELF binary appeared, attestation failed within one poll cycle. Recovery was a signed Git push, and the updated policy was verified and enforced automatically.
 
-This is the full cryptographic chain — from TPM hardware through to the relying party —
+This is the full cryptographic chain, from TPM hardware through to the relying party,
 operating in real time.

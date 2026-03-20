@@ -8,7 +8,7 @@ description: Ratatouille is a continuous TPM-backed attestation system — hardw
 ## The short version
 
 **Ratatouille** (Remote ATTestation made practical) is a continuous TPM-backed attestation system.
-It lets you prove — cryptographically, in real time — that every machine in your fleet is running
+It lets you prove, cryptographically and in real time, that every machine in your fleet is running
 exactly the software you approved, and has not been tampered with since enrollment.
 
 The name is a play on **R**emote **AT**t**e**station. The rat mascot is intentional.
@@ -27,15 +27,15 @@ Ratatouille replaces human attestation with a **verifiable cryptographic chain**
 TPM hardware → measured software state → signed policy approval → real-time continuous verification
 ```
 
-If a machine deviates from its approved state — a new binary executes, a module loads that
-wasn't in the baseline, a kernel parameter changes — the verifier catches it within seconds.
+If a machine deviates from its approved state (a new binary executes, a module loads that
+wasn't in the baseline, a kernel parameter changes), the verifier catches it within seconds.
 Not at the next audit.
 
 ---
 
 ## What it actually does
 
-Ratatouille establishes hardware-rooted identity by enrolling each machine's TPM Endorsement Key into an Attestation Identity Key via the Keylime registrar. It measures boot integrity through PCR snapshots and captures runtime integrity via the IMA log — a kernel-level record of every ELF binary and kernel module loaded since boot. Runtime policies live in Git, signed with Sigstore cosign, so policy approvals are versioned, attributable, and auditable. The Keylime verifier polls every enrolled agent every ~10 seconds and produces a TRUSTED or FAILED status that relying parties can act on directly — for access control, alerting, or token issuance. Every attestation event produces signed, verifiable records backed by Rekor transparency log entries.
+Ratatouille establishes hardware-rooted identity by enrolling each machine's TPM Endorsement Key into an Attestation Identity Key via the Keylime registrar. It measures boot integrity through PCR snapshots and captures runtime integrity via the IMA log, a kernel-level record of every ELF binary and kernel module loaded since boot. Runtime policies live in Git, signed with Sigstore cosign, so policy approvals are versioned, attributable, and auditable. The Keylime verifier polls every enrolled agent every ~10 seconds and produces a TRUSTED or FAILED status that relying parties can act on directly for access control, alerting, or token issuance. Every attestation event produces signed, verifiable records backed by Rekor transparency log entries.
 
 Instead of stitching together TPMs, IMA logs, Sigstore signing, policy pipelines, and Keylime yourself, Ratatouille operationalizes the entire model end-to-end.
 
@@ -54,13 +54,13 @@ Ratatouille is designed for teams across very different contexts who share one n
   into a fleet-scale integrity signal. Policy changes via Git push, fan out to every device automatically.
 
 - **Cloud and enterprise teams** — You don't own the hardware on AWS. Ratatouille gives you
-  cryptographic proof of the measured state of your VMs — same workflow for hybrid, multi-cloud, and on-prem.
+  cryptographic proof of the measured state of your VMs, with the same workflow for hybrid, multi-cloud, and on-prem.
 
 ---
 
 ## The full trust chain
 
-Every attestation token Ratatouille issues is backed by this chain — every link is verifiable:
+Every attestation token Ratatouille issues is backed by this chain, and every link is verifiable:
 
 ```
 TPM Manufacturer
@@ -93,4 +93,4 @@ You own the policies, the evidence, and the cryptographic chain. No lock-in.
 
 ## Next steps
 
-The [Remote Attestation Primer](/ra_overview) covers the underlying concepts — TPMs, IMA, and the RATS framework — for readers who want to understand the mechanics. The [Use Cases](/usecases) page walks through how different teams apply Ratatouille for CJIS compliance, IoT fleets, and cloud workloads. To get a machine enrolled, start with the [Quickstart Guide](/guides/quickstart). To see the full flow live — including a triggered attestation failure — go to the [Live Demo](/demo).
+The [Remote Attestation Primer](/ra_overview) covers the underlying concepts (TPMs, IMA, and the RATS framework) for readers who want to understand the mechanics. The [Use Cases](/usecases) page walks through how different teams apply Ratatouille for CJIS compliance, IoT fleets, and cloud workloads. To get a machine enrolled, start with the [Quickstart Guide](/guides/quickstart). To see the full flow live, including a triggered attestation failure, go to the [Live Demo](/demo).

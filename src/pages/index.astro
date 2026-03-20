@@ -44,20 +44,20 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:           #040807;
-      --bg-surface:   #08100d;
-      --bg-card:      #0c1510;
-      --bg-card-hov:  #101c14;
-      --border:       #141f18;
-      --border-bright:#1e3326;
-      --green:        #00ff88;
-      --green-dim:    #00cc6a;
-      --green-faint:  #00884a;
-      --green-glow:   rgba(0,255,136,.10);
-      --green-glow2:  rgba(0,255,136,.22);
-      --text:         #ddeae2;
-      --text-muted:   #6d9c82;
-      --text-dim:     #2e4a3a;
+      --bg:           #04060f;
+      --bg-surface:   #080d1c;
+      --bg-card:      #0c1228;
+      --bg-card-hov:  #101830;
+      --border:       #141e3a;
+      --border-bright:#1e2e55;
+      --green:        #2563ff;
+      --green-dim:    #1a4fd6;
+      --green-faint:  #0f2e8a;
+      --green-glow:   rgba(37,99,255,.12);
+      --green-glow2:  rgba(37,99,255,.26);
+      --text:         #d6e0f5;
+      --text-muted:   #6880b8;
+      --text-dim:     #4a5c9a;
       --font:         'Inter', system-ui, -apple-system, sans-serif;
       --mono:         'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
       --r:            8px;
@@ -65,20 +65,20 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     }
 
     [data-theme="light"] {
-      --bg:           #f2f5f3;
-      --bg-surface:   #e8ede9;
-      --bg-card:      #eef2ef;
-      --bg-card-hov:  #e4ebe6;
-      --border:       #d0ddd4;
-      --border-bright:#b4caba;
-      --green:        #00a854;
-      --green-dim:    #008f46;
-      --green-faint:  #006b34;
-      --green-glow:   rgba(0,168,84,.10);
-      --green-glow2:  rgba(0,168,84,.20);
-      --text:         #0d1f14;
-      --text-muted:   #3a5c47;
-      --text-dim:     #7a9e87;
+      --bg:           #f2f4f9;
+      --bg-surface:   #e8ecf5;
+      --bg-card:      #edf0f8;
+      --bg-card-hov:  #e3e8f2;
+      --border:       #cdd4e8;
+      --border-bright:#b0bcd8;
+      --green:        #1a4fd6;
+      --green-dim:    #1440b8;
+      --green-faint:  #0d2d80;
+      --green-glow:   rgba(26,79,214,.10);
+      --green-glow2:  rgba(26,79,214,.20);
+      --text:         #0d1224;
+      --text-muted:   #3a4e7a;
+      --text-dim:     #7a8fbb;
     }
 
     html { scroll-behavior: smooth; }
@@ -95,14 +95,14 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       content: '';
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(circle, rgba(0,255,136,.06) 1px, transparent 1px);
+      background-image: radial-gradient(circle, rgba(37,99,255,.06) 1px, transparent 1px);
       background-size: 28px 28px;
       pointer-events: none;
       z-index: 0;
       transition: background-image .3s;
     }
     [data-theme="light"] body::before {
-      background-image: radial-gradient(circle, rgba(0,120,60,.08) 1px, transparent 1px);
+      background-image: radial-gradient(circle, rgba(37,99,255,.07) 1px, transparent 1px);
     }
 
     h1,h2,h3 { font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; }
@@ -126,7 +126,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       text-transform: uppercase;
       color: var(--green);
       background: var(--green-glow);
-      border: 1px solid rgba(0,255,136,.18);
+      border: 1px solid rgba(37,99,255,.18);
       padding: 4px 10px;
       border-radius: 4px;
       margin-bottom: 1.2rem;
@@ -161,7 +161,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     }
     .nav-links a:hover { color: var(--text); }
     .nav-cta {
-      background: var(--green) !important; color: #030806 !important;
+      background: var(--green) !important; color: #ffffff !important;
       padding: 7px 18px; border-radius: var(--r);
       font-weight: 700 !important; font-size: 0.85rem !important;
       transition: background .18s, transform .15s;
@@ -202,7 +202,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       font-weight: 600; font-size: 0.92rem;
       cursor: pointer; transition: all .18s; text-decoration: none !important;
     }
-    .btn-primary  { background: var(--green); color: #030806; }
+    .btn-primary  { background: var(--green); color: #ffffff; }
     .btn-primary:hover  { background: var(--green-dim); transform: translateY(-1px); }
     .btn-secondary {
       background: transparent; color: var(--text); border: 1px solid var(--border-bright);
@@ -229,7 +229,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       border: 1px solid var(--border); background: var(--bg-card);
       transition: background .35s, border-color .35s, box-shadow .35s;
     }
-    .fn.trusted  { border-color: rgba(0,255,136,.28); background: rgba(0,255,136,.07); box-shadow: 0 0 5px rgba(0,255,136,.1); }
+    .fn.trusted  { border-color: rgba(37,99,255,.28); background: rgba(37,99,255,.07); box-shadow: 0 0 5px rgba(37,99,255,.1); }
     .fn.verifying{ border-color: rgba(245,196,60,.4); background: rgba(245,196,60,.07); animation: fn-verify .85s ease-in-out infinite; }
     .fn.failed   { border-color: rgba(255,50,70,.5); background: rgba(255,30,60,.1); box-shadow: 0 0 8px rgba(255,40,70,.18); }
     @keyframes fn-verify {
@@ -266,13 +266,13 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       transition: background .2s;
     }
     .chain-layer:last-child { border-bottom: none; }
-    .chain-layer:nth-child(1) { border-left-color: rgba(0,255,136,0.25); }
-    .chain-layer:nth-child(2) { border-left-color: rgba(0,255,136,0.38); background: rgba(0,255,136,0.015); }
-    .chain-layer:nth-child(3) { border-left-color: rgba(0,255,136,0.55); background: rgba(0,255,136,0.025); }
-    .chain-layer:nth-child(4) { border-left-color: rgba(0,255,136,0.72); background: rgba(0,255,136,0.035); }
+    .chain-layer:nth-child(1) { border-left-color: rgba(37,99,255,0.25); }
+    .chain-layer:nth-child(2) { border-left-color: rgba(37,99,255,0.38); background: rgba(37,99,255,0.015); }
+    .chain-layer:nth-child(3) { border-left-color: rgba(37,99,255,0.55); background: rgba(37,99,255,0.025); }
+    .chain-layer:nth-child(4) { border-left-color: rgba(37,99,255,0.72); background: rgba(37,99,255,0.035); }
     .chain-root {
       border-left: 3px solid var(--green) !important;
-      background: rgba(0,255,136,0.06) !important;
+      background: rgba(37,99,255,0.06) !important;
     }
     .chain-name { font-size: 0.87rem; font-weight: 500; color: var(--text); }
     .chain-root .chain-name { color: var(--green); font-weight: 600; }
@@ -287,10 +287,10 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       border-radius: var(--r-lg); padding: 28px;
       transition: border-color .2s, background .2s, transform .2s;
     }
-    .feature-card:hover { border-color: rgba(0,255,136,.2); background: var(--bg-card-hov); transform: translateY(-2px); }
+    .feature-card:hover { border-color: rgba(37,99,255,.2); background: var(--bg-card-hov); transform: translateY(-2px); }
     .feature-icon {
       width: 42px; height: 42px;
-      background: var(--green-glow); border: 1px solid rgba(0,255,136,.15);
+      background: var(--green-glow); border: 1px solid rgba(37,99,255,.15);
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
       color: var(--green);
@@ -314,7 +314,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--green);
       margin-bottom: 18px; position: relative; z-index: 1;
     }
-    .step-num.active { background: var(--green-glow); border-color: rgba(0,255,136,.35); box-shadow: 0 0 22px rgba(0,255,136,.15); }
+    .step-num.active { background: var(--green-glow); border-color: rgba(37,99,255,.35); box-shadow: 0 0 22px rgba(37,99,255,.15); }
     .step h3    { font-size: 0.85rem; color: var(--text); margin-bottom: 8px; letter-spacing: 0; }
     .step p     { font-size: 0.78rem; color: var(--text-dim); line-height: 1.55; }
     .step-detail { font-family: var(--mono); font-size: 0.65rem; color: var(--green-faint); margin-top: 8px; }
@@ -326,7 +326,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       padding: 30px; display: flex; flex-direction: column; gap: 14px;
       transition: border-color .22s, transform .2s;
     }
-    .usecase-card:hover { border-color: rgba(0,255,136,.2); transform: translateY(-3px); }
+    .usecase-card:hover { border-color: rgba(37,99,255,.2); transform: translateY(-3px); }
     .usecase-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); font-weight: 600; }
     .usecase-card h3 { font-size: 1.1rem; color: var(--text); }
     .usecase-card p  { font-size: 0.85rem; line-height: 1.7; flex: 1; }
@@ -345,7 +345,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       display: flex; flex-direction: column; align-items: center;
       transition: border-color .2s, box-shadow .2s;
     }
-    .chain-box:hover { border-color: rgba(0,255,136,.3); box-shadow: 0 0 16px var(--green-glow); }
+    .chain-box:hover { border-color: rgba(37,99,255,.3); box-shadow: 0 0 16px var(--green-glow); }
     .chain-box-icon  { color: var(--text-muted); margin-bottom: 6px; }
     .chain-box-label { font-family: var(--mono); font-size: 0.6rem; font-weight: 700; color: var(--text-muted); letter-spacing: .06em; line-height: 1.3; }
     .chain-box-sub   { font-size: 0.58rem; color: var(--text-dim); margin-top: 3px; line-height: 1.3; text-align: center; }
@@ -363,7 +363,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 
     /* ── CTA ── */
     .cta-section { text-align: center; padding: 100px 24px; position: relative; overflow: hidden; }
-    .cta-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,255,136,.07) 0%, transparent 70%); pointer-events: none; }
+    .cta-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(37,99,255,.07) 0%, transparent 70%); pointer-events: none; }
     .cta-section h2 { margin-bottom: 1rem; }
     .cta-section p  { max-width: 480px; margin: 0 auto 2.4rem; font-size: 1rem; }
     .cta-actions    { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
@@ -418,7 +418,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <li><a href="#how-it-works">How It Works</a></li>
       <li><a href="#use-cases">Use Cases</a></li>
       <li><a href="/esperanto_overview">Docs</a></li>
-      <li><a href="#contact" class="nav-cta">Get Access</a></li>
+      <li><a href="/app/" class="nav-cta">Try the Demo</a></li>
       <li>
         <button id="theme-toggle" aria-label="Toggle light/dark mode" style="background:none;border:1px solid var(--border-bright);border-radius:var(--r);padding:6px 8px;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;transition:border-color .18s,color .18s;" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--green-faint)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-bright)'">
           <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -445,7 +445,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
         How It Works
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
-      <a href="#contact" class="btn btn-secondary">Get Access</a>
+      <a href="/app/" class="btn btn-secondary">Try the Demo</a>
     </div>
   </div>
 
@@ -476,7 +476,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
           If that layer is tampered, your controls are operating on compromised ground.
         </p>
         <p class="problem-lead" style="margin-top:1rem;">
-          Hardware attestation is the only way to verify that layer. It's the only
+          Hardware attestation is the way to verify that layer. It's the only
           measurement that anchors itself before the OS has a chance to lie about itself.
         </p>
       </div>
@@ -508,7 +508,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     <div class="section-header reveal">
       <div class="tag">Open Standards</div>
       <h2>Adopt remote attestation. Don't rebuild it.</h2>
-      <p>Ratatouille is an integration layer over proven, community-maintained open source tools. You get hardware-rooted attestation without developing or supporting the underlying system. Ratatouille integrates...</p>
+      <p>Ratatouille is an integration layer over proven, open source tools. You get hardware-rooted attestation without developing or supporting the underlying system. Ratatouille integrates...</p>
     </div>
     <div class="standards-grid">
       <div class="std-card reveal">
@@ -555,19 +555,19 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
         <div class="step reveal">
           <div class="step-num">02</div>
           <h3>Baseline</h3>
-          <p>IMA captures every modules and executables loaded since boot. Policy is built from what actually ran, not re-hashed from disk.</p>
+          <p>IMA captures measurements of modules and executables loaded since boot. Policy is built from what actually ran, not re-hashed from disk.</p>
           <div class="step-detail">IMA log → runtime policy</div>
         </div>
         <div class="step reveal">
           <div class="step-num">03</div>
           <h3>Sign &amp; Push</h3>
-          <p>Sign the policy with cosign and push to Git. Ratatouille reads and verifies the Sigstore signature and Rekor log entry. Unauthorized signers are rejected, and verified policy fans out your devices.</p>
+          <p>Sign the policy with cosign and push to Git. Ratatouille reads and verifies the Sigstore signature and Rekor log entry. Unauthorized signers are rejected, and verified policy fans out to your devices.</p>
           <div class="step-detail">git push → webhook → fan-out</div>
         </div>
         <div class="step reveal">
           <div class="step-num">04</div>
           <h3>Verify</h3>
-          <p>Fresh nonce + TPM quote + PCR check + IMA log entries vs. policy. Set your interval, and any unknown binary fails immediately.</p>
+          <p>A TPM quote over IMA log entries vs. policy. Set your interval, and any unknown activity fails immediately.</p>
           <div class="step-detail">TPM quote → IMA verify → PCR</div>
         </div>
         <div class="step reveal">
@@ -586,13 +586,13 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
   <div class="container">
     <div class="section-header reveal">
       <div class="tag">Use Cases</div>
-      <h2>Three scenarios where this actually matters</h2>
+      <h2>Where this matters</h2>
     </div>
     <div class="usecases-grid">
       <div class="usecase-card reveal">
         <div class="usecase-label">Government &amp; Compliance</div>
         <h3>CJIS / FedRAMP Access</h3>
-        <p>A police department connecting to the FBI CJIS database has to attest its machines run approved, unmodified software. Right now that's a human filling out a form. Ratatouille replaces the form with a TPM-rooted, Sigstore-signed, continuously-verified cryptographic proof.</p>
+        <p>A police department connecting to the FBI CJIS database has to attest its machines run approved, unmodified software. Prove compliance with Ratatouille.</p>
         <div class="compliance-tags">
           <span class="ctag">CJIS</span><span class="ctag">FedRAMP</span>
           <span class="ctag">NIST 800-53</span><span class="ctag">DoD IL2–IL5</span><span class="ctag">SOC 2</span>
@@ -601,7 +601,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <div class="usecase-card reveal">
         <div class="usecase-label">IoT &amp; Device Fleets</div>
         <h3>Your Product Ships With a TPM</h3>
-        <p>Every firmware deviation, unauthorized binary, or unexpected module load — caught in seconds across the fleet. Define policy in Git, sign it, push it. Ratatouille fans it out. A million devices is the same workflow as ten.</p>
+        <p>Catch every firmware deviation, unauthorized binary, or unexpected module load across the fleet.</p>
         <div class="compliance-tags">
           <span class="ctag">Fleet attestation</span><span class="ctag">OTA integrity</span>
           <span class="ctag">IEC 62443</span><span class="ctag">SBOM enforcement</span>
@@ -610,7 +610,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <div class="usecase-card reveal">
         <div class="usecase-label">Cloud &amp; Unowned Hardware</div>
         <h3>You Don't Own the Hardware in the Cloud</h3>
-        <p>Cloud providers give you a VM. You have no visibility into the hypervisor below your workload. vTPMs give you a silicon-rooted measurement of the guest — what booted, what's running, what changed. Same workflow on bare metal, cloud VMs, and hybrid.</p>
+        <p>Cloud providers give you a VM with no visibility into the platform beneath it. Don't take their word for it, attest it.</p>
         <div class="compliance-tags">
           <span class="ctag">Any cloud provider</span><span class="ctag">Hybrid cloud</span>
           <span class="ctag">PCI DSS</span><span class="ctag">HIPAA</span>
@@ -627,7 +627,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <div class="chain-intro reveal">
         <div class="tag">Cryptographic Trust Chain</div>
         <h2>Every link is independently verifiable.</h2>
-        <p>From the chip the manufacturer burned a key into, through to the relying party's access decision. You don't have to trust Ratatouille — you can verify each link yourself.</p>
+        <p>From the chip the manufacturer burned a key into, through to the relying party's access decision. You don't have to trust Ratatouille. You can verify each link yourself.</p>
       </div>
       <div class="chain-row reveal">
         <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(CPU, 16)} /></div><div class="chain-box-label">TPM Manufacturer</div><div class="chain-box-sub">Silicon root</div></div></div>
@@ -650,12 +650,12 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
         <div class="chain-arrow">→</div>
         <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(TICKET, 16)} /></div><div class="chain-box-label">Attest. Token</div><div class="chain-box-sub">Issued only when<br />all above pass</div></div></div>
         <div class="chain-arrow">→</div>
-        <div class="chain-node"><div class="chain-box" style="border-color:rgba(0,255,136,.3);box-shadow:0 0 18px rgba(0,255,136,.1)"><div class="chain-box-icon ico" style="color:var(--green)"><Fragment set:html={ico(BUILDING, 16)} /></div><div class="chain-box-label" style="color:var(--green)">Relying Party</div><div class="chain-box-sub">FBI, API gateway,<br />secrets vault</div></div></div>
+        <div class="chain-node"><div class="chain-box" style="border-color:rgba(37,99,255,.3);box-shadow:0 0 18px rgba(37,99,255,.1)"><div class="chain-box-icon ico" style="color:var(--green)"><Fragment set:html={ico(BUILDING, 16)} /></div><div class="chain-box-label" style="color:var(--green)">Relying Party</div><div class="chain-box-sub">FBI, API gateway,<br />secrets vault</div></div></div>
       </div>
       <div class="chain-legend reveal">
-        <div class="chain-legend-item"><div class="chain-dot"></div> Silicon-enforced — cannot be forged in software</div>
-        <div class="chain-legend-item"><div class="chain-dot" style="background:#5ba3f5"></div> Cryptographically chained — tamper-evident</div>
-        <div class="chain-legend-item"><div class="chain-dot" style="background:#f5c842"></div> Publicly auditable — Rekor transparency log</div>
+        <div class="chain-legend-item"><div class="chain-dot"></div> Hardware-enforced</div>
+        <div class="chain-legend-item"><div class="chain-dot" style="background:#5ba3f5"></div> Cryptographically chained</div>
+        <div class="chain-legend-item"><div class="chain-dot" style="background:#f5c842"></div> Publicly auditable</div>
       </div>
     </div>
   </section>
@@ -670,7 +670,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <h2>Three servers or a million devices — same workflow.</h2>
       <p>If you need to know what's actually running on your machines, reach out.</p>
       <div class="cta-actions">
-        <a href="mailto:loganjsch@gmail.com" class="btn btn-primary">Get in Touch</a>
+        <a href="/app/" class="btn btn-primary">Try the Demo</a>
         <a href="/esperanto_overview" class="btn btn-secondary">Read the Docs</a>
       </div>
       <div class="cta-email"><a href="mailto:loganjsch@gmail.com">loganjsch@gmail.com</a></div>
@@ -706,7 +706,7 @@ function setTheme(light: boolean) {
 }
 
 const saved = localStorage.getItem('theme');
-setTheme(saved === 'light');
+setTheme(saved !== 'dark');
 toggle.addEventListener('click', () => setTheme(html.getAttribute('data-theme') !== 'light'));
 
 // ── Fleet grid ──────────────────────────────────────────────

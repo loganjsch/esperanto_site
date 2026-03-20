@@ -20,7 +20,7 @@ connecting a GitHub repo for policy GitOps, and triggering a live attestation fa
 In the Ratatouille UI, create a new **Policy Group**. Give it a name that identifies your fleet or environment.
 
 When you create the group, a **baseline enrollment token** is generated automatically.
-Copy it — you'll need it in Step 2.
+Copy it; you'll need it in Step 2.
 
 Tokens look like: `esp_b_xxxxxxxxxxxxxxxxxxxx`
 
@@ -41,7 +41,7 @@ curl -fsSL https://your-core-instance/install.sh | sudo bash -s -- \
 The install script will:
 1. Install the Keylime Rust agent via apt
 2. Configure the agent with a unique UUID and registrar address via systemd environment
-3. Start the agent — it performs the TPM2 **activate-credential** ceremony with the Ratatouille registrar
+3. Start the agent, which performs the TPM2 **activate-credential** ceremony with the Ratatouille registrar
 4. Capture the full IMA measurement log from the running machine
 5. POST the baseline to Ratatouille Core, which generates and stores your runtime policy
 
@@ -108,7 +108,7 @@ The Keylime verifier polls the agent every ~10 seconds. Each cycle it requests a
 
 ## Step 6: Trigger an Attestation Failure (optional demo)
 
-Shell scripts don't trigger IMA measurements — you need a compiled ELF binary.
+Shell scripts don't trigger IMA measurements. You need a compiled ELF binary.
 This is the cleanest way to demonstrate the system catching unauthorized execution:
 
 ```bash
@@ -126,7 +126,7 @@ Within ~10 seconds, the Ratatouille verifier detects the new IMA entry (`/tmp/ev
 finds it absent from the runtime policy, and flips the agent status to **FAILED**.
 
 :::tip
-Alternatively: `cp /bin/ls /tmp/evil_ls && /tmp/evil_ls` — same effect without needing gcc.
+Alternatively: `cp /bin/ls /tmp/evil_ls && /tmp/evil_ls` (same effect without needing gcc).
 :::
 
 ---
