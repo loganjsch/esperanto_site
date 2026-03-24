@@ -148,7 +148,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       padding: 0 28px; max-width: 1140px; margin: 0 auto; height: 58px;
     }
     .nav-logo {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: center; gap: 0;
       font-size: 1.1rem; font-weight: 900;
       letter-spacing: -0.03em; text-decoration: none;
     }
@@ -367,9 +367,15 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     .cta-section h2 { margin-bottom: 1rem; }
     .cta-section p  { max-width: 480px; margin: 0 auto 2.4rem; font-size: 1rem; }
     .cta-actions    { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
-    .cta-email { font-family: var(--mono); font-size: 0.82rem; color: var(--text-dim); margin-top: 1.4rem; }
-    .cta-email a { color: var(--green-faint); }
-    .cta-email a:hover { color: var(--green); }
+    .cta-email { margin-top: 1.8rem; }
+    .cta-email a {
+      display: inline-block;
+      font-family: var(--mono); font-size: 0.9rem;
+      color: var(--green); border: 1px solid var(--green);
+      padding: 10px 22px; border-radius: var(--r);
+      text-decoration: none; transition: background .18s, color .18s;
+    }
+    .cta-email a:hover { background: var(--green); color: #000; }
 
     /* ── FOOTER ── */
     footer { border-top: 1px solid var(--border); padding: 34px 28px; }
@@ -437,15 +443,14 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     </div>
     <h1>Platform integrity <br />you can<br /><em>prove.</em></h1>
     <p class="hero-sub">
-      Ratatouille is CI/CD-integrated remote attestation deployed and managed automatically at scale.
-      Your platform is either <strong style="color:var(--green);font-weight:700">TRUSTED</strong> or it isn't.
+      Continuous remote attestation for your fleet, automatically deployed and managed at scale.
     </p>
     <div class="hero-actions">
       <a href="#standards" class="btn btn-primary">
         How It Works
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
-      <a href="/app/" class="btn btn-secondary">Try the Demo</a>
+      <a href="mailto:loganjsch@gmail.com" class="btn btn-secondary">Request a Demo</a>
     </div>
   </div>
 
@@ -576,7 +581,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 </div>
 
 <!-- USE CASES -->
-<section class="section" id="use-casesa">
+<section class="section" id="use-cases">
   <div class="container">
     <div class="section-header reveal">
       <div class="tag">Use Cases</div>
@@ -662,9 +667,9 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     <div style="position:relative;z-index:1">
       <div class="tag">Get Access</div>
       <h2>Three servers or a million devices — same workflow.</h2>
-      <p>If you need to know what's actually running on your machines, reach out.</p>
+      <p>If your compliance posture, audit readiness, or platform integrity story needs work, let's talk.</p>
       <div class="cta-actions">
-        <a href="/app/" class="btn btn-primary">Try the Demo</a>
+        <a href="mailto:loganjsch@gmail.com" class="btn btn-primary">Request a Demo</a>
         <a href="/esperanto_overview" class="btn btn-secondary">Read the Docs</a>
       </div>
       <div class="cta-email"><a href="mailto:loganjsch@gmail.com">loganjsch@gmail.com</a></div>
