@@ -35,7 +35,7 @@ Not at the next scan. Not at the next audit.
 
 ## What it actually does
 
-Ratatouille enrolls each machine's TPM with the open source [Keylime](https://keylime.dev) tool, which performs a hardware credential ceremony to verify the manufacturer-issued Endorsement Key and establish a device-unique Attestation Key for signing quotes. It then:
+Ratatouille targets **Linux machines with TPM 2.0** — physical servers, VMs with vTPMs, and Linux-based embedded or IoT devices. It enrolls each machine's TPM with the open source [Keylime](https://keylime.dev) tool, which performs a hardware credential ceremony to verify the manufacturer-issued Endorsement Key and establish a device-unique Attestation Key for signing quotes. It then:
 
 - Captures boot integrity through PCR snapshots taken at startup
 - Records runtime integrity via the IMA log, a kernel-level record of every binary and module loaded since boot, cryptographically anchored to PCR 10

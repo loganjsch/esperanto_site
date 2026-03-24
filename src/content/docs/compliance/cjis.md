@@ -85,7 +85,7 @@ Typical in-scope systems for a state hub or county agency:
 - Network security appliances (Palo Alto, Cisco) — firmware integrity specifically
 - Any Linux or Windows server in the CJI data path
 
-Small agencies — sheriff's offices with one or two IT staff — typically have a handful of Windows desktops, one or two servers, and off-the-shelf network equipment. All of it is in scope if it touches CJI.
+Small agencies — sheriff's offices with one or two IT staff — typically have a handful of Windows desktops, one or two servers, and off-the-shelf network equipment. All of it is in scope if it touches CJI. Ratatouille currently targets Linux systems with TPM 2.0; Linux-based servers and infrastructure components are the primary enrollment candidates, with Windows endpoint coverage requiring separate tooling.
 
 ---
 
@@ -179,7 +179,7 @@ CJISSECPOL does not prohibit open-source software. It must be inventoried, allow
 
 ## The Practical Reality for Small Agencies
 
-The compliance professional quoted at the start of this page described the real problem: a sheriff's office staffed by the sheriff, his deputy, and a dispatcher cannot realistically hire a security engineer to manually verify firmware integrity on their infrastructure. And until recently, the question "is your UEFI intact?" had no affordable answer.
+A sheriff's office staffed by the sheriff, his deputy, and a dispatcher cannot realistically hire a security engineer to manually verify firmware integrity on their infrastructure. And until recently, the question "is your UEFI intact?" had no affordable answer.
 
 Ratatouille is designed for exactly this environment. Enrollment is a single command. The agent runs silently. The verification schedule is set once. When the state CSA auditor asks for integrity evidence, the LASO opens the console and exports the log. When an incident triggers a documentation requirement, the same log answers the question.
 
