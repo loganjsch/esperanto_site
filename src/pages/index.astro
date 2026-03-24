@@ -705,7 +705,7 @@ function setTheme(light: boolean) {
 }
 
 const saved = localStorage.getItem('theme');
-setTheme(saved !== 'dark');
+setTheme(saved === 'light');
 toggle.addEventListener('click', () => setTheme(html.getAttribute('data-theme') !== 'light'));
 
 // ── Fleet grid ──────────────────────────────────────────────
