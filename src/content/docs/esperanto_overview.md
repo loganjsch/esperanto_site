@@ -17,27 +17,33 @@ The name is a play on **R**emote **AT**t**e**station. The rat mascot is intentio
 
 ## What problem does it solve?
 
-Traditional compliance relies on periodic audits and policy documents.
-You write a policy, an auditor checks that the policy exists, and the cycle repeats annually.
-None of that tells you what's *actually running* on your machines right now.
+Traditional compliance relies on periodic scanning and policy documents.
+You run a configuration scanner, review the results, and repeat on a quarterly or annual schedule.
+None of that tells you what's *actually running* on your machines right now — only what was true when the scanner ran.
 
-Ratatouille replaces human attestation with a **verifiable cryptographic chain**:
+Ratatouille replaces periodic, software-level scanning with a **continuous, hardware-rooted cryptographic chain**:
 
 ```
 TPM hardware → measured software state → signed policy approval → real-time continuous verification
 ```
 
-If a machine deviates from its approved state (a new binary executes, a module loads that
-wasn't in the baseline, a kernel parameter changes), the verifier catches it within seconds.
-Not at the next audit.
+If a machine deviates from its approved state — a new binary executes, a module loads that
+wasn't in the baseline — the verifier catches it within seconds.
+Not at the next scan. Not at the next audit.
 
 ---
 
 ## What it actually does
 
-Ratatouille establishes hardware-rooted identity by enrolling each machine's TPM Endorsement Key into an Attestation Identity Key via the Keylime registrar. It measures boot integrity through PCR snapshots and captures runtime integrity via the IMA log, a kernel-level record of every ELF binary and kernel module loaded since boot. Runtime policies live in Git, signed with Sigstore cosign, so policy approvals are versioned, attributable, and auditable. The Keylime verifier polls every enrolled agent every ~10 seconds and produces a TRUSTED or FAILED status that relying parties can act on directly for access control, alerting, or token issuance. Every attestation event produces signed, verifiable records backed by Rekor transparency log entries.
+Ratatouille enrolls each machine's TPM with the open source [Keylime](https://keylime.dev) tool, which performs a hardware credential ceremony to verify the manufacturer-issued Endorsement Key and establish a device-unique Attestation Key for signing quotes. It then:
 
-Instead of stitching together TPMs, IMA logs, Sigstore signing, policy pipelines, and Keylime yourself, Ratatouille operationalizes the entire model end-to-end.
+- Captures boot integrity through PCR snapshots taken at startup
+- Records runtime integrity via the IMA log, a kernel-level record of every binary and module loaded since boot, cryptographically anchored to PCR 10
+- Stores runtime policies in Git, signed with Sigstore cosign, so every policy approval is versioned, attributable, and auditable
+- Polls every enrolled agent every ~10 seconds and produces a TRUSTED or FAILED status that relying parties can act on for access control, alerting, or token issuance
+- Backs every attestation event with signed, verifiable records and Rekor transparency log entries
+
+Instead of assembling TPMs, IMA logs, Sigstore signing, policy pipelines, and Keylime yourself, Ratatouille operationalizes the entire model end-to-end.
 
 ---
 
@@ -53,7 +59,7 @@ Ratatouille is designed for teams across very different contexts who share one n
 - **IoT product companies** — Your devices ship with TPMs. Ratatouille turns that hardware
   into a fleet-scale integrity signal. Policy changes via Git push, fan out to every device automatically.
 
-- **Cloud and enterprise teams** — You don't own the hardware on AWS. Ratatouille gives you
+- **Cloud and enterprise teams** — You don't own the hardware at cloud providers. Ratatouille gives you
   cryptographic proof of the measured state of your VMs, with the same workflow for hybrid, multi-cloud, and on-prem.
 
 ---

@@ -37,6 +37,12 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Case Studies',
+          items: [
+            { label: 'CJIS Compliance', slug: 'compliance/cjis' },
+          ],
+        },
+        {
           label: 'Demo',
           items: [
             { label: 'Live Demo Walkthrough', slug: 'demo' },

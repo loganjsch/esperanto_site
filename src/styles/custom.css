@@ -1,29 +1,29 @@
 /* ── Brand tokens ────────────────────────────────────────── */
 :root {
-  --sl-color-accent-low:  #002d12;
-  --sl-color-accent:      #10d673;
-  --sl-color-accent-high: #7ed4a4;
+  --sl-color-accent-low:  #0a1a4a;
+  --sl-color-accent:      #2563ff;
+  --sl-color-accent-high: #a0b8ff;
   --sl-color-white:       #ffffff;
-  --sl-color-gray-1:      #e4ede8;
-  --sl-color-gray-2:      #b0c4b8;
-  --sl-color-gray-3:      #6d9480;
-  --sl-color-gray-4:      #3e5c4a;
-  --sl-color-gray-5:      #233529;
-  --sl-color-gray-6:      #141e18;
-  --sl-color-black:       #0a0f0c;
+  --sl-color-gray-1:      #e2e8f8;
+  --sl-color-gray-2:      #a8b8d8;
+  --sl-color-gray-3:      #5870a0;
+  --sl-color-gray-4:      #2a3860;
+  --sl-color-gray-5:      #141e3a;
+  --sl-color-gray-6:      #0d1228;
+  --sl-color-black:       #04060f;
 }
 :root[data-theme='light'] {
-  --sl-color-accent-low:  #b7e4c7;
-  --sl-color-accent:      #0ba85a;
-  --sl-color-accent-high: #004020;
-  --sl-color-white:       #0a0f0c;
-  --sl-color-gray-1:      #141e18;
-  --sl-color-gray-2:      #233529;
-  --sl-color-gray-3:      #3e5c4a;
-  --sl-color-gray-4:      #6d9480;
-  --sl-color-gray-5:      #b0c4b8;
-  --sl-color-gray-6:      #e4ede8;
-  --sl-color-gray-7:      #f3f8f5;
+  --sl-color-accent-low:  #dce8ff;
+  --sl-color-accent:      #1a4fd6;
+  --sl-color-accent-high: #0a2a80;
+  --sl-color-white:       #04060f;
+  --sl-color-gray-1:      #141e3a;
+  --sl-color-gray-2:      #2a3860;
+  --sl-color-gray-3:      #5870a0;
+  --sl-color-gray-4:      #a8b8d8;
+  --sl-color-gray-5:      #dce8ff;
+  --sl-color-gray-6:      #eef3ff;
+  --sl-color-gray-7:      #f5f7ff;
   --sl-color-black:       #ffffff;
 }
 
@@ -35,7 +35,7 @@
   --sl-font-mono: 'JetBrains Mono', 'SF Mono', monospace;
 }
 
-/* ── Site title — show the rat ───────────────────────────── */
+/* ── Site title ──────────────────────────────────────────── */
 .site-title {
   font-weight: 700;
   letter-spacing: -0.01em;

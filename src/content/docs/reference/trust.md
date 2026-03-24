@@ -28,7 +28,7 @@ A successful Ratatouille attestation proves:
 5. **The policy was signed by an authorized identity**: Sigstore verification + Rekor log entry
 6. **The quote is fresh**: nonce-based challenge prevents replay attacks
 
-Together, these five proofs mean: **at the time of verification, this machine was running exactly
+Together, these proofs mean: **at the time of verification, this machine was running exactly
 the software stack its policy approves, and the claim is backed by hardware that cannot be
 forged in software.**
 
@@ -36,7 +36,7 @@ forged in software.**
 
 ## What it doesn't prove
 
-Attestation is not a guarantee of application security. An approved, attested binary can still contain vulnerabilities. It is also not immune to pre-enrollment compromise: if the machine was tampered with before baseline enrollment, the tampered state becomes the approved policy. Attestation is a point-in-time check (every ~10 seconds), so a brief execution that terminates before the next poll cycle could go undetected if the timing is tight enough. Attacks that compromise the TPM itself (DMA attacks, hardware implants, supply chain compromise of the chip) are out of scope. Finally, Ratatouille attests what ran; preventing a tampered bootloader from running in the first place requires UEFI Secure Boot, which is independent of RA.
+Attestation is not a guarantee of application security. An approved, attested binary can still contain vulnerabilities. It is also not immune to pre-enrollment compromise: if the machine was tampered with before baseline enrollment, the tampered state becomes the approved policy. Detection has a latency of up to ~10 seconds: an unauthorized binary that executes will be captured in the IMA log and detected on the next poll cycle, but there is a window between execution and the FAILED status firing. Attacks that compromise the TPM itself (DMA attacks, hardware implants, supply chain compromise of the chip) are out of scope. Finally, Ratatouille attests what ran; preventing a tampered bootloader from running in the first place requires UEFI Secure Boot, which is independent of RA.
 
 ---
 

@@ -301,7 +301,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 
     /* ── HOW IT WORKS ── */
     .hiw-bg { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; max-width: 860px; margin: 0 auto; }
     .steps::before {
       content: ''; position: absolute; top: 29px; left: 10%; width: 80%; height: 1px;
       background: linear-gradient(90deg, transparent, var(--border-bright) 20%, var(--border-bright) 80%, transparent);
@@ -549,32 +549,26 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
         <div class="step reveal">
           <div class="step-num active">01</div>
           <h3>Enroll</h3>
-          <p>Install the agent on a device in a known-good state. The agent performs a TPM <code style="font-family:var(--mono);font-size:.8em;color:var(--green)">activate-credential</code> ceremony confirming hardware identity.</p>
+          <p>Install the Ratatouille agent on a device in a known-good state.</p>
           <div class="step-detail">ansible / cloud-init / apt / manual</div>
         </div>
         <div class="step reveal">
           <div class="step-num">02</div>
           <h3>Baseline</h3>
-          <p>IMA captures measurements of modules and executables loaded since boot. Policy is built from what actually ran, not re-hashed from disk.</p>
+          <p>Policy is built from IMA logs of modules and executables loaded since boot. </p>
           <div class="step-detail">IMA log → runtime policy</div>
         </div>
         <div class="step reveal">
           <div class="step-num">03</div>
           <h3>Sign &amp; Push</h3>
-          <p>Sign the policy with cosign and push to Git. Ratatouille reads and verifies the Sigstore signature and Rekor log entry. Unauthorized signers are rejected, and verified policy fans out to your devices.</p>
+          <p>Sign the policy and push to Git. Ratatouille reads and verifies the policy signature and fans it out to your devices.</p>
           <div class="step-detail">git push → webhook → fan-out</div>
         </div>
         <div class="step reveal">
           <div class="step-num">04</div>
           <h3>Verify</h3>
-          <p>A TPM quote over IMA log entries vs. policy. Set your interval, and any unknown activity fails immediately.</p>
+          <p>At a chosen interval, Ratatouille evaluates a TPM quote over IMA log entries against your policy.</p>
           <div class="step-detail">TPM quote → IMA verify → PCR</div>
-        </div>
-        <div class="step reveal">
-          <div class="step-num">05</div>
-          <h3>Act</h3>
-          <p>TRUSTED or FAILED, continuously. Wire to access control, secrets provisioning, incident alerting, or attestation token issuance.</p>
-          <div class="step-detail">TRUSTED / FAILED → downstream</div>
         </div>
       </div>
     </div>
@@ -582,7 +576,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 </div>
 
 <!-- USE CASES -->
-<section class="section" id="use-cases">
+<section class="section" id="use-casesa">
   <div class="container">
     <div class="section-header reveal">
       <div class="tag">Use Cases</div>
