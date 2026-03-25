@@ -196,6 +196,45 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       margin: 0 auto 2.6rem; max-width: 620px;
     }
     .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .install-block {
+      margin-top: 3rem;
+      display: inline-flex; flex-direction: column; align-items: flex-start; gap: 10px;
+      width: 100%; max-width: 520px;
+    }
+    .install-pm {
+      display: flex; gap: 4px;
+    }
+    .install-pm-btn {
+      padding: 4px 14px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.03em;
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--border); cursor: pointer; transition: all .15s;
+    }
+    .install-pm-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .install-distro {
+      display: none; gap: 4px;
+    }
+    .install-distro.visible { display: flex; }
+    .install-distro-btn {
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 0.68rem; color: var(--text-muted);
+      background: transparent; border: 1px solid var(--border);
+      cursor: pointer; transition: all .15s;
+    }
+    .install-distro-btn.active { color: var(--green); border-color: var(--green); }
+    .install-shell {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--bg-surface); border: 1px solid var(--border-bright);
+      border-radius: var(--r); padding: 14px 20px; width: 100%;
+    }
+    .install-dollar { font-family: var(--mono); font-size: 0.9rem; color: var(--text-muted); user-select: none; }
+    .install-cmd    { font-family: var(--mono); font-size: 0.9rem; color: var(--text); flex: 1; text-align: left; }
+    .install-copy {
+      background: none; border: none; cursor: pointer; padding: 2px;
+      color: var(--text-muted); transition: color .15s; line-height: 1; flex-shrink: 0;
+    }
+    .install-copy:hover { color: var(--green); }
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 13px 26px; border-radius: var(--r);
@@ -450,7 +489,28 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
         How It Works
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
-      <a href="mailto:loganjsch@gmail.com" class="btn btn-secondary">Request a Demo</a>
+    </div>
+
+    <p style="margin-top:1.6rem;margin-bottom:0;font-size:0.8rem;color:var(--text-muted);">or just get started…</p>
+
+    <div class="install-block">
+      <div class="install-pm">
+        <button class="install-pm-btn active" data-cmd="brew install ratatouille" data-os="macos">macOS</button>
+        <button class="install-pm-btn" data-cmd="pip install ratatouille" data-os="python">Python</button>
+        <button class="install-pm-btn" data-cmd="apt install ratatouille" data-os="linux">Linux</button>
+      </div>
+      <div class="install-distro" id="install-distro">
+        <button class="install-distro-btn active" data-cmd="apt install ratatouille">Ubuntu / Debian</button>
+        <button class="install-distro-btn" data-cmd="dnf install ratatouille">Fedora / RHEL</button>
+      </div>
+      <div class="install-shell">
+        <span class="install-dollar">$</span>
+        <span class="install-cmd" id="install-cmd">brew install ratatouille</span>
+        <button class="install-copy" id="install-copy" title="Copy">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1 1 0 0 1 1-1h8"/></svg>
+        </button>
+      </div>
+      <p style="font-size:0.78rem;color:var(--text-muted);margin:6px 0 0 2px;">One CLI for your whole fleet. Manage from your laptop or enroll a machine directly.</p>
     </div>
   </div>
 
@@ -485,23 +545,85 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
           measurement that anchors itself before the OS has a chance to lie about itself.
         </p>
       </div>
-      <div class="trust-chain reveal">
-        <div class="chain-layer">
-          <span class="chain-name">Applications</span>
-        </div>
-        <div class="chain-layer">
-          <span class="chain-name">Kernel</span>
-        </div>
-        <div class="chain-layer">
-          <span class="chain-name">Bootloader</span>
-        </div>
-        <div class="chain-layer">
-          <span class="chain-name">UEFI Firmware</span>
-        </div>
-        <div class="chain-layer chain-root">
-          <span class="chain-name">Silicon &nbsp;·&nbsp; TPM</span>
-          <span class="chain-root-label">trust root</span>
-        </div>
+      <div class="reveal" style="display:flex;justify-content:center;align-items:center;">
+        <svg viewBox="0 0 340 380" width="340" height="380" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+          <defs>
+            <style>
+              .iso-text { font-family: var(--mono, monospace); font-size: 11px; fill: var(--text-muted, #888); }
+              .iso-label-bright { font-family: var(--mono, monospace); font-size: 11px; font-weight: 600; fill: #2563ff; }
+            </style>
+          </defs>
+
+          <!-- isometric helpers: each layer is a parallelogram extruding upward -->
+          <!-- Layer order bottom→top: CPU/Silicon, TPM, Firmware, Bootloader, Kernel, Apps -->
+
+          <!-- ── CPU base (dark slab) ── -->
+          <g transform="translate(170,340)">
+            <!-- top face -->
+            <polygon points="0,-18 72,-54 0,-90 -72,-54" fill="#1a1a2e" stroke="#2563ff" stroke-width="1.2" opacity="0.9"/>
+            <!-- right face -->
+            <polygon points="72,-54 72,-36 0,-0 0,-18" fill="#111128" stroke="#2563ff" stroke-width="1.2" opacity="0.9"/>
+            <!-- left face -->
+            <polygon points="-72,-54 -72,-36 0,-0 0,-18" fill="#0d0d1f" stroke="#2563ff" stroke-width="1.2" opacity="0.9"/>
+            <text x="0" y="-50" text-anchor="middle" class="iso-label-bright">Silicon</text>
+            <!-- CPU grid lines on top face -->
+            <line x1="-24" y1="-66" x2="24" y2="-90" stroke="#2563ff" stroke-width="0.4" opacity="0.4"/>
+            <line x1="24" y1="-66" x2="-24" y2="-90" stroke="#2563ff" stroke-width="0.4" opacity="0.4"/>
+            <line x1="0" y1="-54" x2="0" y2="-90" stroke="#2563ff" stroke-width="0.4" opacity="0.4"/>
+          </g>
+
+          <!-- ── TPM block (blue, offset to right) ── -->
+          <g transform="translate(230,290)">
+            <polygon points="0,-14 36,-28 0,-42 -36,-28" fill="#2563ff" stroke="#4d84ff" stroke-width="1"/>
+            <polygon points="36,-28 36,-16 0,-2 0,-14" fill="#1a4fd6" stroke="#4d84ff" stroke-width="1"/>
+            <polygon points="-36,-28 -36,-16 0,-2 0,-14" fill="#1240b8" stroke="#4d84ff" stroke-width="1"/>
+            <text x="0" y="-30" text-anchor="middle" class="iso-label-bright" style="font-size:9px;">TPM</text>
+            <!-- glow -->
+            <ellipse cx="0" cy="-14" rx="38" ry="12" fill="#2563ff" opacity="0.12" filter="url(#glow)"/>
+          </g>
+
+          <!-- ── UEFI Firmware layer ── -->
+          <g transform="translate(170,278)">
+            <polygon points="0,-16 80,-50 0,-84 -80,-50" fill="rgba(37,99,255,0.07)" stroke="rgba(37,99,255,0.35)" stroke-width="1"/>
+            <polygon points="80,-50 80,-34 0,0 0,-16" fill="rgba(37,99,255,0.04)" stroke="rgba(37,99,255,0.25)" stroke-width="1"/>
+            <polygon points="-80,-50 -80,-34 0,0 0,-16" fill="rgba(37,99,255,0.03)" stroke="rgba(37,99,255,0.2)" stroke-width="1"/>
+            <text x="-62" y="-46" class="iso-text">UEFI Firmware</text>
+          </g>
+
+          <!-- ── Bootloader layer ── -->
+          <g transform="translate(170,228)">
+            <polygon points="0,-16 80,-50 0,-84 -80,-50" fill="rgba(37,99,255,0.05)" stroke="rgba(37,99,255,0.28)" stroke-width="1"/>
+            <polygon points="80,-50 80,-34 0,0 0,-16" fill="rgba(37,99,255,0.03)" stroke="rgba(37,99,255,0.2)" stroke-width="1"/>
+            <polygon points="-80,-50 -80,-34 0,0 0,-16" fill="rgba(37,99,255,0.02)" stroke="rgba(37,99,255,0.15)" stroke-width="1"/>
+            <text x="-52" y="-46" class="iso-text">Bootloader</text>
+          </g>
+
+          <!-- ── Kernel layer ── -->
+          <g transform="translate(170,178)">
+            <polygon points="0,-16 80,-50 0,-84 -80,-50" fill="rgba(37,99,255,0.04)" stroke="rgba(37,99,255,0.22)" stroke-width="1"/>
+            <polygon points="80,-50 80,-34 0,0 0,-16" fill="rgba(37,99,255,0.02)" stroke="rgba(37,99,255,0.15)" stroke-width="1"/>
+            <polygon points="-80,-50 -80,-34 0,0 0,-16" fill="rgba(37,99,255,0.015)" stroke="rgba(37,99,255,0.12)" stroke-width="1"/>
+            <text x="-32" y="-46" class="iso-text">Kernel</text>
+          </g>
+
+          <!-- ── Applications layer (top, most transparent) ── -->
+          <g transform="translate(170,128)">
+            <polygon points="0,-16 80,-50 0,-84 -80,-50" fill="rgba(37,99,255,0.02)" stroke="rgba(37,99,255,0.15)" stroke-width="1"/>
+            <polygon points="80,-50 80,-34 0,0 0,-16" fill="rgba(37,99,255,0.01)" stroke="rgba(37,99,255,0.1)" stroke-width="1"/>
+            <polygon points="-80,-50 -80,-34 0,0 0,-16" fill="rgba(37,99,255,0.01)" stroke="rgba(37,99,255,0.08)" stroke-width="1"/>
+            <text x="-40" y="-46" class="iso-text">Applications</text>
+          </g>
+
+          <!-- ── TPM connector line ── -->
+          <line x1="194" y1="262" x2="232" y2="283" stroke="#2563ff" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.5"/>
+
+          <defs>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+        </svg>
       </div>
     </div>
   </div>
@@ -669,10 +791,10 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <h2>Three servers or a million devices — same workflow.</h2>
       <p>If your compliance posture, audit readiness, or platform integrity story needs work, let's talk.</p>
       <div class="cta-actions">
-        <a href="mailto:loganjsch@gmail.com" class="btn btn-primary">Request a Demo</a>
+        <a href="/app/" class="btn btn-primary">Try the Demo</a>
         <a href="/esperanto_overview" class="btn btn-secondary">Read the Docs</a>
       </div>
-      <div class="cta-email"><a href="mailto:loganjsch@gmail.com">loganjsch@gmail.com</a></div>
+      <div class="cta-email"><a href="mailto:logan@ratatouille.dev">logan@ratatouille.dev</a></div>
     </div>
   </section>
 </div>
@@ -684,7 +806,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     <div class="footer-links">
       <a href="/esperanto_overview">Docs</a>
       <a href="/ra_overview">What is Remote Attestation?</a>
-      <a href="mailto:loganjsch@gmail.com">Contact</a>
+      <a href="mailto:logan@ratatouille.dev">Contact</a>
     </div>
     <div class="footer-right"><span style="color:var(--green)">R</span>emote&nbsp;<span style="color:var(--green)">AT</span>Testation</div>
   </div>
@@ -772,6 +894,40 @@ const obs = new IntersectionObserver(
   { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
 );
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+document.querySelectorAll('.install-pm-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.install-pm-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const distro = document.getElementById('install-distro');
+    if (btn.dataset.os === 'linux') {
+      distro.classList.add('visible');
+      const active = distro.querySelector('.install-distro-btn.active');
+      document.getElementById('install-cmd').textContent = active ? active.dataset.cmd : btn.dataset.cmd;
+    } else {
+      distro.classList.remove('visible');
+      document.getElementById('install-cmd').textContent = btn.dataset.cmd;
+    }
+  });
+});
+
+document.querySelectorAll('.install-distro-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.install-distro-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('install-cmd').textContent = btn.dataset.cmd;
+  });
+});
+
+document.getElementById('install-copy').addEventListener('click', () => {
+  const cmd = document.getElementById('install-cmd').textContent;
+  navigator.clipboard.writeText(cmd).then(() => {
+    const btn = document.getElementById('install-copy');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l4 4L14 4"/></svg>';
+    setTimeout(() => btn.innerHTML = orig, 1800);
+  });
+});
 </script>
 
 </body>

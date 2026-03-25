@@ -9,7 +9,7 @@ export default defineConfig({
       description: 'Continuous TPM-backed platform integrity attestation. Platform Trust at Any Scale.',
       customCss: ['./src/styles/custom.css'],
       social: [
-        { icon: 'email', label: 'Contact', href: 'mailto:loganjsch@gmail.com' },
+        { icon: 'email', label: 'Contact', href: 'mailto:logan@ratatouille.dev' },
       ],
       head: [
         {
@@ -45,7 +45,7 @@ export default defineConfig({
         {
           label: 'Demo',
           items: [
-            { label: 'Live Demo Walkthrough', slug: 'demo' },
+            { label: 'Demo Walkthrough', slug: 'demo' },
           ],
         },
         {

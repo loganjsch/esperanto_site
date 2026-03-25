@@ -1,5 +1,5 @@
 ---
-title: Live Demo Walkthrough
+title: Demo Walkthrough
 description: Step-by-step walkthrough of a complete Ratatouille attestation demo — enrollment, live verification, and a triggered attestation failure.
 ---
 
@@ -15,7 +15,7 @@ No deep Keylime knowledge required. That's the point.
 
 ## The Setup
 
-The demo uses two machines. The **Core server** (`34.68.204.198`) runs the Ratatouille backend, Keylime verifier, and Keylime registrar. The **Agent machine** (`34.66.179.242`) is the machine being attested and runs the Keylime Rust agent. The Ratatouille UI is at `http://34.68.204.198:5173`.
+The demo uses two machines. The **Core server** runs the Ratatouille backend, Keylime verifier, and Keylime registrar. The **Agent machine** is the machine being attested and runs the Keylime Rust agent. The Ratatouille UI is accessible from the Core server.
 
 ---
 
@@ -27,13 +27,17 @@ Navigate to the Ratatouille dashboard → **New Group** → give it a name.
 
 A baseline enrollment token is generated: `esp_b_...`
 
+:::note[Screenshot]
+_[ dashboard — new group creation and baseline token ]_
+:::
+
 ### 2. Run the install script on the agent machine
 
 ```bash
 sudo ./install.sh \
   --token "esp_b_..." \
-  --registrar "10.128.0.4" \
-  --core-url "http://10.128.0.4:8001" \
+  --registrar "<core-server-ip>" \
+  --core-url "http://<core-server-ip>:8001" \
   --baseline
 ```
 
@@ -54,6 +58,10 @@ from TPM-measured values (not re-hashed from disk). The policy is stored as `Bas
 **The agent now appears in the UI with status: `provisioning`.** It has an identity and a baseline,
 but no active signed policy has been pushed yet.
 
+:::note[Screenshot]
+_[ fleet view — agent in provisioning state after enrollment ]_
+:::
+
 ---
 
 ## Phase 2: Connect GitHub and Push a Signed Policy
@@ -72,8 +80,8 @@ runtime/
 ### 5. Sign the policy with cosign
 
 ```bash
-cosign sign-blob runtime/runtime_policy.json \
-  --bundle runtime/artifact.sigstore.json \
+cosign sign-blob runtime_policy.json \
+  --bundle artifact.sigstore.json \
   --identity-token $(gcloud auth print-identity-token)
 ```
 
@@ -97,6 +105,10 @@ Ratatouille's GitHub webhook fires:
 
 **The agent flips to `active` in the UI.**
 
+:::note[Screenshot]
+_[ fleet view — agent active after policy push; policies view — signed policy entry ]_
+:::
+
 ---
 
 ## Phase 3: Watch Continuous Attestation
@@ -115,6 +127,10 @@ Each cycle:
 3. Verifier checks PCR[10] extends with each new IMA entry
 4. Every new IMA entry is looked up against the runtime policy hash set
 5. All entries match → attestation passes
+
+:::note[Screenshot]
+_[ verifier logs — continuous IMA check cycles passing ]_
+:::
 
 ---
 
@@ -146,6 +162,10 @@ WARNING keylime.verifier  Agent d432fbb3... failed, stopping polling
 
 **The agent flips to `failed` in the UI.**
 
+:::note[Screenshot]
+_[ fleet view — agent in failed state; verifier log output showing IMA mismatch ]_
+:::
+
 ---
 
 ## Phase 5: Recover by Updating the Policy
@@ -160,8 +180,8 @@ sudo grep /tmp/evil_ls /sys/kernel/security/ima/ascii_runtime_measurements
 
 # Add it to runtime_policy.json under the "/tmp/evil_ls" key
 # Sign the updated policy
-cosign sign-blob runtime/runtime_policy.json \
-  --bundle runtime/artifact.sigstore.json \
+cosign sign-blob runtime_policy.json \
+  --bundle artifact.sigstore.json \
   --identity-token $(...)
 
 git add runtime/ && git commit -m "policy: allow /tmp/evil_ls" && git push
@@ -169,6 +189,10 @@ git add runtime/ && git commit -m "policy: allow /tmp/evil_ls" && git push
 
 Ratatouille detects the push, re-runs the Sigstore verification, and pushes the updated policy
 to the verifier. Attestation resumes with the new policy. Agent flips back to `active`.
+
+:::note[Screenshot]
+_[ fleet view — agent back to active after policy update ]_
+:::
 
 :::tip[The GitOps security model]
 The policy update had to be **signed by an authorized identity** and pass Sigstore verification.
