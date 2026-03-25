@@ -1,0 +1,169 @@
+---
+title: Trust Model
+description: How Ratatouille's two trust chains — hardware and policy — converge at the verifier to produce a continuous attestation verdict.
+---
+
+<a href="/" class="back-to-site">← ratatouille.dev</a>
+
+Ratatouille's trust model is built from two independent chains that converge at the verifier. Neither chain alone is sufficient — a valid hardware quote proves the machine is the right machine, but says nothing about what's running on it. A valid signed policy proves someone authorized approved a baseline, but says nothing about whether the machine matches it. The verifier combines both.
+
+---
+
+## The two chains
+
+<svg viewBox="0 0 640 545" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;margin:2.5rem auto;display:block;font-family:monospace">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="rgba(37,99,255,0.55)"/>
+    </marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="rgba(37,99,255,0.85)"/>
+    </marker>
+  </defs>
+
+  {/* Column labels */}
+  <text x="160" y="16" text-anchor="middle" font-size="9" fill="rgba(37,99,255,0.65)" font-weight="700" letter-spacing="0.1em">HARDWARE CHAIN</text>
+  <text x="480" y="16" text-anchor="middle" font-size="9" fill="rgba(37,99,255,0.65)" font-weight="700" letter-spacing="0.1em">POLICY CHAIN</text>
+
+  {/* ── LEFT: Hardware chain ── */}
+  {/* TPM Manufacturer */}
+  <rect x="85" y="24" width="150" height="30" rx="5" fill="rgba(37,99,255,0.05)" stroke="rgba(37,99,255,0.22)" stroke-width="1"/>
+  <text x="160" y="44" text-anchor="middle" font-size="11" fill="currentColor">TPM Manufacturer</text>
+  <line x1="160" y1="54" x2="160" y2="76" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="167" y="69" font-size="8" fill="rgba(37,99,255,0.5)">EK cert chain</text>
+
+  {/* EK Certificate */}
+  <rect x="85" y="80" width="150" height="30" rx="5" fill="rgba(37,99,255,0.05)" stroke="rgba(37,99,255,0.22)" stroke-width="1"/>
+  <text x="160" y="100" text-anchor="middle" font-size="11" fill="currentColor">EK Certificate</text>
+  <line x1="160" y1="110" x2="160" y2="132" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="167" y="125" font-size="8" fill="rgba(37,99,255,0.5)">enrollment</text>
+
+  {/* AIK */}
+  <rect x="85" y="136" width="150" height="30" rx="5" fill="rgba(37,99,255,0.05)" stroke="rgba(37,99,255,0.22)" stroke-width="1"/>
+  <text x="160" y="156" text-anchor="middle" font-size="11" fill="currentColor">AIK (registered)</text>
+  <line x1="160" y1="166" x2="160" y2="188" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="167" y="181" font-size="8" fill="rgba(37,99,255,0.5)">signs quote</text>
+
+  {/* TPM Quote */}
+  <rect x="85" y="192" width="150" height="36" rx="5" fill="rgba(37,99,255,0.07)" stroke="rgba(37,99,255,0.3)" stroke-width="1"/>
+  <text x="160" y="208" text-anchor="middle" font-size="11" fill="currentColor">TPM Quote</text>
+  <text x="160" y="222" text-anchor="middle" font-size="8.5" fill="rgba(37,99,255,0.65)">+ fresh nonce</text>
+  <line x1="160" y1="228" x2="160" y2="250" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+
+  {/* PCRs */}
+  <rect x="85" y="254" width="150" height="36" rx="5" fill="rgba(37,99,255,0.07)" stroke="rgba(37,99,255,0.3)" stroke-width="1"/>
+  <text x="160" y="270" text-anchor="middle" font-size="11" fill="currentColor">PCR[7] · PCR[10]</text>
+  <text x="160" y="283" text-anchor="middle" font-size="8.5" fill="rgba(37,99,255,0.65)">Secure Boot · IMA</text>
+  <line x1="160" y1="290" x2="160" y2="312" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+
+  {/* IMA Log */}
+  <rect x="85" y="316" width="150" height="36" rx="5" fill="rgba(37,99,255,0.1)" stroke="rgba(37,99,255,0.42)" stroke-width="1.2"/>
+  <text x="160" y="332" text-anchor="middle" font-size="11" fill="currentColor">IMA Log</text>
+  <text x="160" y="345" text-anchor="middle" font-size="8.5" fill="rgba(37,99,255,0.65)">every binary since boot</text>
+
+  {/* ── RIGHT: Policy chain ── */}
+  {/* Policy Author */}
+  <rect x="405" y="24" width="150" height="30" rx="5" fill="rgba(37,99,255,0.05)" stroke="rgba(37,99,255,0.22)" stroke-width="1"/>
+  <text x="480" y="44" text-anchor="middle" font-size="11" fill="currentColor">Policy Author</text>
+  <line x1="480" y1="54" x2="480" y2="76" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="487" y="69" font-size="8" fill="rgba(37,99,255,0.5)">authors baseline</text>
+
+  {/* Runtime Policy */}
+  <rect x="405" y="80" width="150" height="30" rx="5" fill="rgba(37,99,255,0.05)" stroke="rgba(37,99,255,0.22)" stroke-width="1"/>
+  <text x="480" y="100" text-anchor="middle" font-size="11" fill="currentColor">Runtime Policy</text>
+  <line x1="480" y1="110" x2="480" y2="132" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="487" y="125" font-size="8" fill="rgba(37,99,255,0.5)">cosign sign-blob</text>
+
+  {/* Sigstore Bundle */}
+  <rect x="405" y="136" width="150" height="36" rx="5" fill="rgba(37,99,255,0.05)" stroke="rgba(37,99,255,0.22)" stroke-width="1"/>
+  <text x="480" y="152" text-anchor="middle" font-size="11" fill="currentColor">Sigstore Bundle</text>
+  <text x="480" y="165" text-anchor="middle" font-size="8.5" fill="rgba(37,99,255,0.65)">sig + identity cert</text>
+  <line x1="480" y1="172" x2="480" y2="194" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="487" y="187" font-size="8" fill="rgba(37,99,255,0.5)">recorded in log</text>
+
+  {/* Rekor */}
+  <rect x="405" y="198" width="150" height="36" rx="5" fill="rgba(37,99,255,0.07)" stroke="rgba(37,99,255,0.3)" stroke-width="1"/>
+  <text x="480" y="214" text-anchor="middle" font-size="11" fill="currentColor">Rekor Log</text>
+  <text x="480" y="227" text-anchor="middle" font-size="8.5" fill="rgba(37,99,255,0.65)">public, append-only</text>
+  <line x1="480" y1="234" x2="480" y2="256" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="487" y="249" font-size="8" fill="rgba(37,99,255,0.5)">git push → webhook</text>
+
+  {/* Ratatouille verifies + distributes */}
+  <rect x="405" y="260" width="150" height="36" rx="5" fill="rgba(37,99,255,0.07)" stroke="rgba(37,99,255,0.3)" stroke-width="1"/>
+  <text x="480" y="276" text-anchor="middle" font-size="11" fill="currentColor">Ratatouille Core</text>
+  <text x="480" y="289" text-anchor="middle" font-size="8.5" fill="rgba(37,99,255,0.65)">verifies sig, fans out</text>
+  <line x1="480" y1="296" x2="480" y2="318" stroke="rgba(37,99,255,0.45)" stroke-width="1.4" marker-end="url(#a)"/>
+
+  {/* Policy Distributed */}
+  <rect x="405" y="322" width="150" height="30" rx="5" fill="rgba(37,99,255,0.1)" stroke="rgba(37,99,255,0.42)" stroke-width="1.2"/>
+  <text x="480" y="342" text-anchor="middle" font-size="11" fill="currentColor">Policy on Verifier</text>
+
+  {/* ── Convergence arrows → Verifier ── */}
+  <line x1="160" y1="352" x2="160" y2="400" stroke="rgba(37,99,255,0.7)" stroke-width="1.6"/>
+  <line x1="160" y1="400" x2="302" y2="400" stroke="rgba(37,99,255,0.7)" stroke-width="1.6" marker-end="url(#a2)"/>
+
+  <line x1="480" y1="352" x2="480" y2="400" stroke="rgba(37,99,255,0.7)" stroke-width="1.6"/>
+  <line x1="480" y1="400" x2="338" y2="400" stroke="rgba(37,99,255,0.7)" stroke-width="1.6" marker-end="url(#a2)"/>
+
+  {/* Keylime Verifier */}
+  <rect x="190" y="408" width="260" height="44" rx="8" fill="#2563ff" stroke="#5580ff" stroke-width="1.5"/>
+  <text x="320" y="426" text-anchor="middle" font-size="12" font-weight="700" fill="white">Keylime Verifier</text>
+  <text x="320" y="442" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.75)">IMA entries match policy · PCRs valid · quote fresh</text>
+
+  {/* Verdict arrow */}
+  <line x1="320" y1="452" x2="320" y2="474" stroke="rgba(37,99,255,0.8)" stroke-width="1.8" marker-end="url(#a2)"/>
+
+  {/* Verdict */}
+  <rect x="200" y="478" width="240" height="32" rx="6" fill="rgba(37,99,255,0.08)" stroke="rgba(37,99,255,0.38)" stroke-width="1.2"/>
+  <text x="320" y="494" text-anchor="middle" font-size="10" fill="currentColor">TRUSTED</text>
+  <text x="320" y="506" text-anchor="middle" font-size="8.5" fill="rgba(37,99,255,0.6)">surfaced to API · dashboard · relying party</text>
+</svg>
+
+---
+
+## Hardware chain
+
+The hardware chain establishes that the machine presenting evidence is the specific hardware that enrolled.
+
+The **TPM Manufacturer** burns an Endorsement Key (EK) into the silicon at manufacture time and signs an EK certificate with their CA. This certificate is the anchor — it cannot be faked without breaking RSA. During enrollment, Keylime's registrar verifies this certificate against the manufacturer's public CA, then establishes an **Attestation Identity Key (AIK)** — a separate key the TPM uses to sign quotes, so the EK is never directly exposed.
+
+On every polling cycle (~10 seconds), the verifier sends a fresh nonce and requests a **TPM Quote**: a hardware-signed snapshot of the PCR values at that moment, bound to that nonce. A quote without the nonce is a replay; a quote with the wrong PCRs is a tampered machine. PCR[7] captures the Secure Boot state at boot; PCR[10] is extended by IMA on every binary load since boot.
+
+The **IMA log** is the detailed record: every ELF binary, kernel module, and shared library that executed, with its SHA-256 hash. The log hash-extends into PCR[10], so any tampering with the log breaks the PCR.
+
+---
+
+## Policy chain
+
+The policy chain establishes that someone with authority approved the expected state of the machine.
+
+A **policy author** generates a runtime policy from an enrolled baseline machine's IMA log — the set of hashes that are allowed to appear. They sign it with **Cosign** using keyless signing: no long-lived private key, just a short-lived certificate tied to their authenticated identity (GitHub Actions OIDC, email, etc.). The signature, certificate, and artifact hash are recorded in the **Rekor transparency log** — public, append-only, independently auditable.
+
+On a `git push`, Ratatouille's webhook handler fetches the bundle, re-verifies the signature and Rekor inclusion, and distributes the verified policy to the **Keylime verifier** for each enrolled device.
+
+---
+
+## Convergence
+
+The verifier holds both chains simultaneously. On each cycle it checks:
+
+1. The TPM quote is signed by the registered AIK for this device
+2. The nonce in the quote matches the one it sent (freshness)
+3. PCR[10] in the quote matches what the IMA log hash-extends to (log integrity)
+4. Every IMA log entry's hash appears in the active signed policy (no unauthorized binaries)
+5. PCR[7] matches the expected Secure Boot state (boot integrity)
+
+All five must pass. If any fails, the device is immediately marked `FAILED`.
+
+---
+
+## What you have to trust
+
+| Trust assumption | Why |
+|---|---|
+| TPM manufacturer | EK certificate is the hardware root — there is no layer below it |
+| Keylime (open source) | The verifier and agent implementation — auditable on GitHub |
+| Sigstore / Rekor | The transparency log is honest — publicly verifiable by anyone |
+| Linux kernel IMA | The measurement subsystem itself — part of the mainline kernel |
+
+**What you do not have to trust:** Ratatouille's servers, the cloud provider, the network path, or the operator of the machine after enrollment. The evidence is cryptographically bound to the hardware and independently verifiable at every step.

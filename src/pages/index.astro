@@ -339,7 +339,14 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     .feature-card p  { font-size: 0.85rem; line-height: 1.65; }
 
     /* ── HOW IT WORKS ── */
-    .hiw-bg { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .hiw-bg { background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    /* section glow accents */
+    .glow-right { position: relative; }
+    .glow-right::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 55% 60% at 80% 50%, rgba(37,99,255,.07) 0%, transparent 70%); pointer-events:none; z-index:0; }
+    .glow-center { position: relative; }
+    .glow-center::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(37,99,255,.07) 0%, transparent 70%); pointer-events:none; z-index:0; }
+    .glow-left { position: relative; }
+    .glow-left::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 55% 60% at 20% 50%, rgba(37,99,255,.07) 0%, transparent 70%); pointer-events:none; z-index:0; }
     .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; max-width: 860px; margin: 0 auto; }
     .steps::before {
       content: ''; position: absolute; top: 29px; left: 10%; width: 80%; height: 1px;
@@ -395,7 +402,8 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 
     /* ── STANDARDS ── */
     .standards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 44px; }
-    .std-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 22px; text-align: center; }
+    .std-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 22px; text-align: center; display: block; text-decoration: none !important; color: inherit; transition: border-color .18s, box-shadow .18s; }
+    .std-card:hover { border-color: rgba(37,99,255,.35); box-shadow: 0 0 18px rgba(37,99,255,.08); }
     .std-icon  { display: flex; align-items: center; justify-content: center; color: var(--green); margin-bottom: 12px; }
     .std-name  { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 6px; }
     .std-desc  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; }
@@ -461,7 +469,6 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     </a>
     <ul class="nav-links">
       <li><a href="#how-it-works">How It Works</a></li>
-      <li><a href="#use-cases">Use Cases</a></li>
       <li><a href="/esperanto_overview">Docs</a></li>
       <li><a href="/app/" class="nav-cta">Try the Demo</a></li>
       <li>
@@ -478,11 +485,11 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-eyebrow">
-      <span style="color:var(--green);font-weight:800">R</span>emote&nbsp;<span style="color:var(--green);font-weight:800">AT</span>Testation&thinsp;→&thinsp;<span style="color:var(--green);font-weight:800">RAT</span>atouille
+      <span style="color:var(--green);font-weight:800">R</span>emote&nbsp;<span style="color:var(--green);font-weight:800">AT</span>testation
     </div>
     <h1>Platform integrity <br />you can<br /><em>prove.</em></h1>
     <p class="hero-sub">
-      Continuous remote attestation for your fleet, automatically deployed and managed at scale.
+      Continuous remote attestation for your devices, automatically deployed and managed at scale.
     </p>
     <div class="hero-actions">
       <a href="#standards" class="btn btn-primary">
@@ -530,99 +537,91 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 <hr class="divider" />
 
 <!-- PROBLEM -->
-<section class="section" id="problem">
+<section class="section glow-right" id="problem">
   <div class="container">
     <div class="problem-grid">
       <div class="reveal">
         <h2>Your security controls run on top of a system you've never verified.</h2>
-        <p class="problem-lead" style="margin-top:1.4rem;">
-          Firewalls, IAM, and EDR all run in <strong>user space,</strong> which means they all
-          run on top of a kernel, a bootloader, and firmware that loaded before any of them started.
-          If that layer is tampered, your controls are operating on compromised ground.
+        <p class="problem-lead" style="margin-top:1.4rem;font-size:0.95rem;">
+          Firewalls, IAM, and EDR run on top of a kernel, bootloader, and firmware
+          that loaded before any of them started. If that stack is compromised, your controls are too.
         </p>
-        <p class="problem-lead" style="margin-top:1rem;">
-          Hardware attestation is the way to verify that layer. It's the only
-          measurement that anchors itself before the OS has a chance to lie about itself.
+        <p class="problem-lead" style="margin-top:0.9rem;font-size:0.95rem;">
+          Ratatouille measures each layer and continuously attests that none of it has changed.
         </p>
       </div>
       <div class="reveal" style="display:flex;justify-content:center;align-items:center;">
-        <svg viewBox="0 0 340 380" width="340" height="380" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+        <svg viewBox="0 0 340 390" width="320" height="370" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <style>
-              .iso-text { font-family: var(--mono, monospace); font-size: 11px; fill: var(--text-muted, #888); }
-              .iso-label-bright { font-family: var(--mono, monospace); font-size: 11px; font-weight: 600; fill: #2563ff; }
-            </style>
-          </defs>
-
-          <!-- isometric helpers: each layer is a parallelogram extruding upward -->
-          <!-- Layer order bottom→top: CPU/Silicon, TPM, Firmware, Bootloader, Kernel, Apps -->
-
-          <!-- ── CPU base (dark slab) ── -->
-          <g transform="translate(170,340)">
-            <!-- top face -->
-            <polygon points="0,-18 72,-54 0,-90 -72,-54" fill="#1a1a2e" stroke="#2563ff" stroke-width="1.2" opacity="0.9"/>
-            <!-- right face -->
-            <polygon points="72,-54 72,-36 0,-0 0,-18" fill="#111128" stroke="#2563ff" stroke-width="1.2" opacity="0.9"/>
-            <!-- left face -->
-            <polygon points="-72,-54 -72,-36 0,-0 0,-18" fill="#0d0d1f" stroke="#2563ff" stroke-width="1.2" opacity="0.9"/>
-            <text x="0" y="-50" text-anchor="middle" class="iso-label-bright">Silicon</text>
-            <!-- CPU grid lines on top face -->
-            <line x1="-24" y1="-66" x2="24" y2="-90" stroke="#2563ff" stroke-width="0.4" opacity="0.4"/>
-            <line x1="24" y1="-66" x2="-24" y2="-90" stroke="#2563ff" stroke-width="0.4" opacity="0.4"/>
-            <line x1="0" y1="-54" x2="0" y2="-90" stroke="#2563ff" stroke-width="0.4" opacity="0.4"/>
-          </g>
-
-          <!-- ── TPM block (blue, offset to right) ── -->
-          <g transform="translate(230,290)">
-            <polygon points="0,-14 36,-28 0,-42 -36,-28" fill="#2563ff" stroke="#4d84ff" stroke-width="1"/>
-            <polygon points="36,-28 36,-16 0,-2 0,-14" fill="#1a4fd6" stroke="#4d84ff" stroke-width="1"/>
-            <polygon points="-36,-28 -36,-16 0,-2 0,-14" fill="#1240b8" stroke="#4d84ff" stroke-width="1"/>
-            <text x="0" y="-30" text-anchor="middle" class="iso-label-bright" style="font-size:9px;">TPM</text>
-            <!-- glow -->
-            <ellipse cx="0" cy="-14" rx="38" ry="12" fill="#2563ff" opacity="0.12" filter="url(#glow)"/>
-          </g>
-
-          <!-- ── UEFI Firmware layer ── -->
-          <g transform="translate(170,278)">
-            <polygon points="0,-16 80,-50 0,-84 -80,-50" fill="rgba(37,99,255,0.07)" stroke="rgba(37,99,255,0.35)" stroke-width="1"/>
-            <polygon points="80,-50 80,-34 0,0 0,-16" fill="rgba(37,99,255,0.04)" stroke="rgba(37,99,255,0.25)" stroke-width="1"/>
-            <polygon points="-80,-50 -80,-34 0,0 0,-16" fill="rgba(37,99,255,0.03)" stroke="rgba(37,99,255,0.2)" stroke-width="1"/>
-            <text x="-62" y="-46" class="iso-text">UEFI Firmware</text>
-          </g>
-
-          <!-- ── Bootloader layer ── -->
-          <g transform="translate(170,228)">
-            <polygon points="0,-16 80,-50 0,-84 -80,-50" fill="rgba(37,99,255,0.05)" stroke="rgba(37,99,255,0.28)" stroke-width="1"/>
-            <polygon points="80,-50 80,-34 0,0 0,-16" fill="rgba(37,99,255,0.03)" stroke="rgba(37,99,255,0.2)" stroke-width="1"/>
-            <polygon points="-80,-50 -80,-34 0,0 0,-16" fill="rgba(37,99,255,0.02)" stroke="rgba(37,99,255,0.15)" stroke-width="1"/>
-            <text x="-52" y="-46" class="iso-text">Bootloader</text>
-          </g>
-
-          <!-- ── Kernel layer ── -->
-          <g transform="translate(170,178)">
-            <polygon points="0,-16 80,-50 0,-84 -80,-50" fill="rgba(37,99,255,0.04)" stroke="rgba(37,99,255,0.22)" stroke-width="1"/>
-            <polygon points="80,-50 80,-34 0,0 0,-16" fill="rgba(37,99,255,0.02)" stroke="rgba(37,99,255,0.15)" stroke-width="1"/>
-            <polygon points="-80,-50 -80,-34 0,0 0,-16" fill="rgba(37,99,255,0.015)" stroke="rgba(37,99,255,0.12)" stroke-width="1"/>
-            <text x="-32" y="-46" class="iso-text">Kernel</text>
-          </g>
-
-          <!-- ── Applications layer (top, most transparent) ── -->
-          <g transform="translate(170,128)">
-            <polygon points="0,-16 80,-50 0,-84 -80,-50" fill="rgba(37,99,255,0.02)" stroke="rgba(37,99,255,0.15)" stroke-width="1"/>
-            <polygon points="80,-50 80,-34 0,0 0,-16" fill="rgba(37,99,255,0.01)" stroke="rgba(37,99,255,0.1)" stroke-width="1"/>
-            <polygon points="-80,-50 -80,-34 0,0 0,-16" fill="rgba(37,99,255,0.01)" stroke="rgba(37,99,255,0.08)" stroke-width="1"/>
-            <text x="-40" y="-46" class="iso-text">Applications</text>
-          </g>
-
-          <!-- ── TPM connector line ── -->
-          <line x1="194" y1="262" x2="232" y2="283" stroke="#2563ff" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.5"/>
-
-          <defs>
-            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="blur"/>
-              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            <linearGradient id="beam-grad" x1="0" y1="0" x2="0" y2="1" gradientUnits="userSpaceOnUse" y1="48" y2="310">
+              <stop offset="0%" stop-color="#2563ff" stop-opacity="0"/>
+              <stop offset="100%" stop-color="#2563ff" stop-opacity="0.55"/>
+            </linearGradient>
+            <filter id="tpm-glow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="10" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="beam-glow" x="-200%" y="0%" width="500%" height="100%">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
+
+          <!-- ── Trust beam (rises from TPM through all layers) ── -->
+          <rect x="152" y="48" width="10" height="262" fill="url(#beam-grad)" filter="url(#beam-glow)" opacity="0.7"/>
+
+          <!-- ── Layer: Applications ── -->
+          <polygon points="157,48 237,68 157,88 77,68"   fill="rgba(37,99,255,0.04)" stroke="rgba(37,99,255,0.14)" stroke-width="1"/>
+          <polygon points="237,68 237,82 157,102 157,88"  fill="rgba(0,0,0,0.18)"  stroke="rgba(37,99,255,0.09)" stroke-width="1"/>
+          <polygon points="77,68  77,82  157,102 157,88"  fill="rgba(0,0,0,0.12)"  stroke="rgba(37,99,255,0.07)" stroke-width="1"/>
+          <text x="244" y="74"  font-family="monospace" font-size="11" style="fill:var(--text-muted)" opacity="0.6">Applications</text>
+
+          <!-- ── Layer: Kernel ── -->
+          <polygon points="157,112 237,132 157,152 77,132"  fill="rgba(37,99,255,0.06)" stroke="rgba(37,99,255,0.2)"  stroke-width="1"/>
+          <polygon points="237,132 237,146 157,166 157,152" fill="rgba(0,0,0,0.22)"  stroke="rgba(37,99,255,0.13)" stroke-width="1"/>
+          <polygon points="77,132  77,146  157,166 157,152" fill="rgba(0,0,0,0.15)"  stroke="rgba(37,99,255,0.1)"  stroke-width="1"/>
+          <text x="244" y="138" font-family="monospace" font-size="11" style="fill:var(--text-muted)" opacity="0.75">Kernel</text>
+
+          <!-- ── Layer: Bootloader ── -->
+          <polygon points="157,176 237,196 157,216 77,196"  fill="rgba(37,99,255,0.08)" stroke="rgba(37,99,255,0.28)" stroke-width="1"/>
+          <polygon points="237,196 237,210 157,230 157,216" fill="rgba(0,0,0,0.26)"  stroke="rgba(37,99,255,0.18)" stroke-width="1"/>
+          <polygon points="77,196  77,210  157,230 157,216" fill="rgba(0,0,0,0.18)"  stroke="rgba(37,99,255,0.14)" stroke-width="1"/>
+          <text x="244" y="202" font-family="monospace" font-size="11" style="fill:var(--text-muted)">Bootloader</text>
+
+          <!-- ── Layer: UEFI Firmware ── -->
+          <polygon points="157,240 237,260 157,280 77,260"  fill="rgba(37,99,255,0.11)" stroke="rgba(37,99,255,0.38)" stroke-width="1.1"/>
+          <polygon points="237,260 237,274 157,294 157,280" fill="rgba(0,0,0,0.3)"   stroke="rgba(37,99,255,0.24)" stroke-width="1.1"/>
+          <polygon points="77,260  77,274  157,294 157,280" fill="rgba(0,0,0,0.22)"  stroke="rgba(37,99,255,0.18)" stroke-width="1.1"/>
+          <text x="244" y="266" font-family="monospace" font-size="11" style="fill:var(--text)">UEFI Firmware</text>
+
+          <!-- ── TPM — trust root (solid, glowing) ── -->
+          <!-- glow halo -->
+          <polygon points="157,304 237,324 157,344 77,324" fill="#2563ff" opacity="0.18" filter="url(#tpm-glow)"/>
+          <!-- top face -->
+          <polygon points="157,304 237,324 157,344 77,324" fill="#2563ff" stroke="#6090ff" stroke-width="1.6"/>
+          <!-- right face -->
+          <polygon points="237,324 237,338 157,358 157,344" fill="#1848cc" stroke="#5080f0" stroke-width="1.6"/>
+          <!-- left face -->
+          <polygon points="77,324  77,338  157,358 157,344" fill="#0f30a0" stroke="#3d68d8" stroke-width="1.6"/>
+          <!-- surface detail: grid lines suggesting silicon -->
+          <line x1="157" y1="304" x2="157" y2="344" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>
+          <line x1="77"  y1="324" x2="237" y2="324" stroke="rgba(255,255,255,0.1)"  stroke-width="0.8"/>
+          <!-- bond pads -->
+          <circle cx="127" cy="326" r="2"   fill="rgba(255,255,255,0.55)"/>
+          <circle cx="140" cy="319" r="2"   fill="rgba(255,255,255,0.55)"/>
+          <circle cx="174" cy="319" r="2"   fill="rgba(255,255,255,0.55)"/>
+          <circle cx="187" cy="326" r="2"   fill="rgba(255,255,255,0.55)"/>
+          <circle cx="157" cy="332" r="2.5" fill="rgba(255,255,255,0.7)"/>
+          <!-- TPM labels -->
+          <text x="244" y="326" font-family="monospace" font-size="12" font-weight="bold" fill="#2563ff">TPM 2.0</text>
+          <text x="244" y="341" font-family="monospace" font-size="9"  fill="#2563ff" opacity="0.6">trust root</text>
+
+          <!-- anchor dots on each layer's N corner (where beam touches) -->
+          <circle cx="157" cy="68"  r="2.5" fill="#2563ff" opacity="0.45"/>
+          <circle cx="157" cy="132" r="2.5" fill="#2563ff" opacity="0.55"/>
+          <circle cx="157" cy="196" r="2.5" fill="#2563ff" opacity="0.65"/>
+          <circle cx="157" cy="260" r="2.5" fill="#2563ff" opacity="0.8"/>
+          <circle cx="157" cy="324" r="3.5" fill="white"   opacity="0.85"/>
         </svg>
       </div>
     </div>
@@ -630,7 +629,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 </section>
 
 <!-- OPEN STANDARDS -->
-<section class="section-sm" id="standards">
+<section class="section-sm glow-left" id="standards" style="background:var(--bg-surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
     <div class="section-header reveal">
       <div class="tag">Open Standards</div>
@@ -638,26 +637,26 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <p>Ratatouille is an integration layer over proven, open source tools. You get hardware-rooted attestation without developing or supporting the underlying system. Ratatouille integrates...</p>
     </div>
     <div class="standards-grid">
-      <div class="std-card reveal">
+      <a class="std-card reveal" href="/reference/keylime">
         <div class="std-icon"><Fragment set:html={ico(KEY, 28)} /></div>
         <div class="std-name">Keylime</div>
         <div class="std-desc">TPM-based remote attestation and IMA log verification engine. Open source, CNCF-hosted.</div>
-      </div>
-      <div class="std-card reveal">
+      </a>
+      <a class="std-card reveal" href="/reference/sigstore">
         <div class="std-icon"><Fragment set:html={ico(EDIT, 28)} /></div>
         <div class="std-name">Sigstore / Cosign</div>
         <div class="std-desc">Keyless policy signing with no long-lived keys to manage. Every policy approval is attributable to a specific authenticated identity and permanently auditable.</div>
-      </div>
-      <div class="std-card reveal">
+      </a>
+      <a class="std-card reveal" href="/reference/ima">
         <div class="std-icon"><Fragment set:html={ico(TERM, 28)} /></div>
         <div class="std-name">Linux IMA</div>
-        <div class="std-desc">Kernel-level measurement of modules and executbales as they load. The OS cannot alter what IMA recorded.</div>
-      </div>
-      <div class="std-card reveal">
+        <div class="std-desc">Kernel-level measurement of modules and executables as they load. The OS cannot alter what IMA recorded.</div>
+      </a>
+      <a class="std-card reveal" href="/reference/rats">
         <div class="std-icon"><Fragment set:html={ico(NETWORK, 28)} /></div>
         <div class="std-name">IETF RATS (RFC 9334)</div>
         <div class="std-desc">The IETF standard defining remote attestation best practices. Ratatouille implements the background-check model against this spec.</div>
-      </div>
+      </a>
     </div>
   </div>
 </section>
@@ -665,7 +664,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 <hr class="divider" />
 
 <!-- HOW IT WORKS -->
-<div class="hiw-bg" id="how-it-works">
+<div class="hiw-bg glow-center" id="how-it-works">
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
@@ -701,45 +700,6 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     </div>
   </section>
 </div>
-
-<!-- USE CASES -->
-<section class="section" id="use-cases">
-  <div class="container">
-    <div class="section-header reveal">
-      <div class="tag">Use Cases</div>
-      <h2>Where this matters</h2>
-    </div>
-    <div class="usecases-grid">
-      <div class="usecase-card reveal">
-        <div class="usecase-label">Government &amp; Compliance</div>
-        <h3>CJIS / FedRAMP Access</h3>
-        <p>A police department connecting to the FBI CJIS database has to attest its machines run approved, unmodified software. Prove compliance with Ratatouille.</p>
-        <div class="compliance-tags">
-          <span class="ctag">CJIS</span><span class="ctag">FedRAMP</span>
-          <span class="ctag">NIST 800-53</span><span class="ctag">DoD IL2–IL5</span><span class="ctag">SOC 2</span>
-        </div>
-      </div>
-      <div class="usecase-card reveal">
-        <div class="usecase-label">IoT &amp; Device Fleets</div>
-        <h3>Your Product Ships With a TPM</h3>
-        <p>Catch every firmware deviation, unauthorized binary, or unexpected module load across the fleet.</p>
-        <div class="compliance-tags">
-          <span class="ctag">Fleet attestation</span><span class="ctag">OTA integrity</span>
-          <span class="ctag">IEC 62443</span><span class="ctag">SBOM enforcement</span>
-        </div>
-      </div>
-      <div class="usecase-card reveal">
-        <div class="usecase-label">Cloud &amp; Unowned Hardware</div>
-        <h3>You Don't Own the Hardware in the Cloud</h3>
-        <p>Cloud providers give you a VM with no visibility into the platform beneath it. Don't take their word for it, attest it.</p>
-        <div class="compliance-tags">
-          <span class="ctag">Any cloud provider</span><span class="ctag">Hybrid cloud</span>
-          <span class="ctag">PCI DSS</span><span class="ctag">HIPAA</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- TRUST CHAIN -->
 <div class="chain-bg">
@@ -781,6 +741,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     </div>
   </section>
 </div>
+
 
 <!-- CTA -->
 <div style="background:var(--bg-surface);border-top:1px solid var(--border)">

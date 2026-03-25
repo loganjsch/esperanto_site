@@ -51,9 +51,13 @@ export default defineConfig({
         {
           label: 'Reference',
           items: [
+            { label: 'Trust Model', slug: 'reference/trust-model' },
             { label: 'Runtime Policies', slug: 'reference/policies' },
             { label: 'Trust & Attestation', slug: 'reference/trust' },
-            { label: 'RATS Framework', slug: 'reference/rats' },
+            { label: 'RATS Framework (RFC 9334)', slug: 'reference/rats' },
+            { label: 'Keylime', slug: 'reference/keylime' },
+            { label: 'Sigstore / Cosign', slug: 'reference/sigstore' },
+            { label: 'Linux IMA', slug: 'reference/ima' },
           ],
         },
       ],
