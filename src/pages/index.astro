@@ -347,7 +347,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     .glow-center::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(37,99,255,.07) 0%, transparent 70%); pointer-events:none; z-index:0; }
     .glow-left { position: relative; }
     .glow-left::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 55% 60% at 20% 50%, rgba(37,99,255,.07) 0%, transparent 70%); pointer-events:none; z-index:0; }
-    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; max-width: 860px; margin: 0 auto; }
+    .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; max-width: 1060px; margin: 0 auto; }
     .steps::before {
       content: ''; position: absolute; top: 29px; left: 10%; width: 80%; height: 1px;
       background: linear-gradient(90deg, transparent, var(--border-bright) 20%, var(--border-bright) 80%, transparent);
@@ -489,7 +489,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     </div>
     <h1>Platform integrity <br />you can<br /><em>prove.</em></h1>
     <p class="hero-sub">
-      Continuous remote attestation for your devices, automatically deployed and managed at scale.
+      Automated remote attestation for Linux machines with TPM 2.0.
     </p>
     <div class="hero-actions">
       <a href="#standards" class="btn btn-primary">
@@ -517,7 +517,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1 1 0 0 1 1-1h8"/></svg>
         </button>
       </div>
-      <p style="font-size:0.78rem;color:var(--text-muted);margin:6px 0 0 2px;">One CLI for your whole fleet. Manage from your laptop or enroll a machine directly.</p>
+      <p style="font-size:0.78rem;color:var(--text-muted);margin:6px 0 0 2px;">One CLI for your whole fleet. Manage from your laptop or enroll a Linux machine directly.</p>
     </div>
   </div>
 
@@ -541,13 +541,15 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
   <div class="container">
     <div class="problem-grid">
       <div class="reveal">
-        <h2>Your security controls run on top of a system you've never verified.</h2>
+        <h2>Attesting your machines shouldn't require a PhD.</h2>
         <p class="problem-lead" style="margin-top:1.4rem;font-size:0.95rem;">
-          Firewalls, IAM, and EDR run on top of a kernel, bootloader, and firmware
-          that loaded before any of them started. If that stack is compromised, your controls are too.
+          Keylime, Linux IMA, and TPM 2.0 already solve hardware-rooted integrity verification for Linux. But deploying them means managing a registrar, a verifier, mTLS certificates, TPM quote schemas, IMA allowlists, and policy fan-out, none of which is operationally documented anywhere useful.
         </p>
         <p class="problem-lead" style="margin-top:0.9rem;font-size:0.95rem;">
-          Ratatouille measures each layer and continuously attests that none of it has changed.
+          Ratatouille handles all of it. Generate a policy from a known-good machine, push it to Git, and every enrolled machine is continuously attested against it.
+        </p>
+        <p class="problem-lead" style="margin-top:0.9rem;font-size:0.95rem;">
+          The cryptographic evidence is yours: exportable, independently verifiable, and not locked in our dashboard.
         </p>
       </div>
       <div class="reveal" style="display:flex;justify-content:center;align-items:center;">
@@ -634,7 +636,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     <div class="section-header reveal">
       <div class="tag">Open Standards</div>
       <h2>Adopt remote attestation. Don't rebuild it.</h2>
-      <p>Ratatouille is an integration layer over proven, open source tools. You get hardware-rooted attestation without developing or supporting the underlying system. Ratatouille integrates...</p>
+      <p>Ratatouille operationalizes proven open-source components. Your policies, your evidence, your cryptographic chain are all verifiable with standard tooling whether or not Ratatouille exists.</p>
     </div>
     <div class="standards-grid">
       <a class="std-card reveal" href="/reference/keylime">
@@ -655,7 +657,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <a class="std-card reveal" href="/reference/rats">
         <div class="std-icon"><Fragment set:html={ico(NETWORK, 28)} /></div>
         <div class="std-name">IETF RATS (RFC 9334)</div>
-        <div class="std-desc">The IETF standard defining remote attestation best practices. Ratatouille implements the background-check model against this spec.</div>
+        <div class="std-desc">The IETF standard defining remote attestation best practices. Ratatouille is architecturally aligned with IETF RATS RFC 9334.</div>
       </a>
     </div>
   </div>
@@ -696,6 +698,12 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
           <p>At a chosen interval, Ratatouille evaluates a TPM quote over IMA log entries against your policy.</p>
           <div class="step-detail">TPM quote → IMA verify → PCR</div>
         </div>
+        <div class="step reveal">
+          <div class="step-num">05</div>
+          <h3>Export</h3>
+          <p>Pull a signed evidence package at any time in a format any auditor can verify independently.</p>
+          <div class="step-detail">ratatouille evidence export --machine &lt;id&gt;</div>
+        </div>
       </div>
     </div>
   </section>
@@ -731,7 +739,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
         <div class="chain-arrow">→</div>
         <div class="chain-node"><div class="chain-box"><div class="chain-box-icon ico"><Fragment set:html={ico(TICKET, 16)} /></div><div class="chain-box-label">Attest. Token</div><div class="chain-box-sub">Issued only when<br />all above pass</div></div></div>
         <div class="chain-arrow">→</div>
-        <div class="chain-node"><div class="chain-box" style="border-color:rgba(37,99,255,.3);box-shadow:0 0 18px rgba(37,99,255,.1)"><div class="chain-box-icon ico" style="color:var(--green)"><Fragment set:html={ico(BUILDING, 16)} /></div><div class="chain-box-label" style="color:var(--green)">Relying Party</div><div class="chain-box-sub">FBI, API gateway,<br />secrets vault</div></div></div>
+        <div class="chain-node"><div class="chain-box" style="border-color:rgba(37,99,255,.3);box-shadow:0 0 18px rgba(37,99,255,.1)"><div class="chain-box-icon ico" style="color:var(--green)"><Fragment set:html={ico(BUILDING, 16)} /></div><div class="chain-box-label" style="color:var(--green)">Relying Party</div><div class="chain-box-sub">Auditor, API gateway,<br />secrets vault</div></div></div>
       </div>
       <div class="chain-legend reveal">
         <div class="chain-legend-item"><div class="chain-dot"></div> Hardware-enforced</div>
@@ -749,8 +757,6 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
     <div class="cta-glow"></div>
     <div style="position:relative;z-index:1">
       <div class="tag">Get Access</div>
-      <h2>Three servers or a million devices — same workflow.</h2>
-      <p>If your compliance posture, audit readiness, or platform integrity story needs work, let's talk.</p>
       <div class="cta-actions">
         <a href="/app/" class="btn btn-primary">Try the Demo</a>
         <a href="/esperanto_overview" class="btn btn-secondary">Read the Docs</a>
