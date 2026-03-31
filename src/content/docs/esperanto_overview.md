@@ -5,70 +5,39 @@ description: Ratatouille makes TPM/IMA attestation for Linux operationally acces
 
 <a href="/" class="back-to-site">← ratatouille.dev</a>
 
-## The short version
+## Overview
 
 **Ratatouille** (Remote ATTestation made practical) is a continuous TPM-backed attestation system for **Linux machines with TPM 2.0**.
 
-It lets you prove, cryptographically and in real time, that every machine in your Linux fleet is running exactly the software you approved, and has not been tampered with since enrollment. The critical distinction: the evidence Ratatouille produces is independently verifiable by any third party using open tooling — not just by trusting Ratatouille's dashboard.
+It lets you prove, cryptographically and in real time, that every machine in your Linux fleet is running exactly the software you approved and has not been tampered with since enrollment. The critical distinction here is that the evidence Ratatouille produces is independently verifiable by any third party using open tooling.
 
-Think of it as a **notarized audit trail for machine state**. Except the notary is the TPM hardware itself, so no vendor needs to be trusted — including us.
+You can think of it as a **notarized audit trail for machine state**, except the notary is the TPM hardware itself, so the only people you are trusting are the guys who manufactured your device. (you are already doing this when you *use* that device)
 
 ---
 
-## What problem does it solve?
+## Why?
 
-Traditional compliance relies on periodic scanning and policy documents — or on vendor-attested dashboards that tell you your configuration settings are correct. Neither tells you what's *actually running* on your machines right now, and both require you to trust the vendor's report.
+**Proving platform state is hard.** When an auditor or access-control system asks "how do you know your machines are running what they're supposed to?" the current answer is usually a form, a vendor dashboard, or a periodic scan. None of those are independently verifiable. The relying party has to trust whoever filled out the form or the vendor who ran the scan. Ratatouille replaces that with a cryptographic chain rooted in hardware that any third party can independently replay and verify, without trusting you or any vendor.
 
-Ratatouille solves two related problems simultaneously:
+**Building it yourself is harder.** The pieces for hardware-rooted attestation exist — TPMs, RATS, Signature verification — but assembling them into an operational system means building TPM registration workflows, IMA policy generation and management, a RATS aligned verifier, a GitOps fan-out pipeline with signature verification, then maintaining all of it across your fleet. Most teams that need this capability don't have months to spend on the infrastructure layer.
 
-**The integrity problem:** A compromised kernel, bootloader, or binary executing below your security stack is invisible to firewalls, IAM, and EDR. None of those controls start until after the kernel loads.
-
-**The trust problem:** Every compliance SaaS (Vanta, Drata, Secureframe) produces vendor-attested reports stored in the vendor's cloud, presented through the vendor's portal, and verified only by trusting that the vendor accurately collected the data. If the vendor is compromised, wrong, or simply gone, the evidence is worthless.
-
-Ratatouille replaces periodic, software-level scanning with a **continuous, hardware-rooted cryptographic chain** that any auditor can independently replay and verify:
-
-```
-TPM hardware → measured software state → signed policy approval → real-time continuous verification
-```
-
-If a machine deviates from its approved state — a new binary executes, a module loads that wasn't in the baseline — the verifier catches it within seconds. Not at the next scan. Not at the next audit.
+Ratatouille operationalizes the full stack so you don't have to build it.
 
 ---
 
 ## What it actually does
 
-Ratatouille targets **Linux machines with TPM 2.0** — physical servers, cloud VMs with vTPMs (AWS NitroTPM, GCP Shielded VM, Azure Trusted Launch), and Linux-based IoT or edge devices. It is not a general-purpose attestation platform for macOS, Windows, or heterogeneous hardware.
+Ratatouille targets **Linux machines with TPM 2.0** like physical servers, cloud VMs with vTPMs (AWS NitroTPM, GCP Shielded VM, Azure Trusted Launch), and Linux-based IoT or edge devices. It is not a general-purpose attestation platform for macOS, Windows, or heterogeneous hardware, yet :).
 
 It enrolls each machine's TPM with the open-source [Keylime](https://keylime.dev) engine (CNCF Sandbox project, shipped in RHEL 9), which performs a hardware credential ceremony to verify the manufacturer-issued Endorsement Key and establish a device-unique Attestation Key for signing quotes. It then:
 
-- Captures boot integrity through PCR snapshots taken at startup
+- Captures boot integrity through PCR snapshots taken during startup
 - Records runtime integrity via the IMA log, a kernel-level record of every binary and module loaded since boot, cryptographically anchored to PCR 10
 - Stores runtime policies in Git, signed with Sigstore cosign, so every policy approval is versioned, attributable, and auditable
 - Polls every enrolled agent every ~10 seconds and produces a TRUSTED or FAILED status that relying parties can act on for access control, alerting, or token issuance
 - Backs every attestation event with signed, verifiable records and Rekor transparency log entries that any third party can independently verify with `tpm2-tools`, `cosign verify`, and `rekor-cli`
 
-Instead of assembling TPMs, IMA logs, Sigstore signing, policy pipelines, and Keylime yourself — Keylime alone has four components, mTLS certificate management, and 42 configuration options — Ratatouille operationalizes the entire model end-to-end.
-
-Ratatouille is to Keylime what Terraform Cloud is to Terraform.
-
----
-
-## Who is it for?
-
-The primary audience for Phase 1 is **platform engineering teams at companies that sell to U.S. government or defense customers** — Series B+ or mid-market companies (200–2,000 employees) where someone already knows they need attestation because a customer or auditor asked for it, but looked at raw Keylime and decided the operational burden was too high.
-
-**Why now:** Three converging FY2027 compliance deadlines create urgency:
-- **DoD Zero Trust Strategy** requires Target Level compliance by September 30, 2027. The NSA Device Pillar guidance explicitly names TPM Platform Certificates and Reference Integrity Manifests.
-- **CJIS Security Policy v6.0** phases in firmware integrity verification (NIST SP 800-53 SI-7) by October 2027.
-- **FedRAMP High** baseline requires SI-7(15) — cryptographic code authentication prior to installation — which TPM-based attestation directly satisfies.
-
-**Other audiences:**
-
-- **Government / law enforcement** — CJIS, FedRAMP, DoD IL requirements demand cryptographic proof that the connecting machine is running approved software. Ratatouille replaces human attestation with a verifiable chain the relying party can check independently.
-
-- **Cloud and enterprise teams** — You don't own the hardware at cloud providers. Ratatouille gives you cryptographic proof of the measured state of your VMs, with the same workflow for hybrid, multi-cloud, and on-prem.
-
-- **IoT and edge device companies** — Your devices ship with TPMs. Ratatouille turns that hardware into a fleet-scale integrity signal. Policy changes via Git push, fan out to enrolled devices automatically.
+Instead of assembling TPMs, IMA logs, Sigstore signing, policy pipelines, and Keylime yourself. Keylime alone has four components, mTLS certificate management, and 42 configuration options. Ratatouille operationalizes the entire model end-to-end.
 
 ---
 
