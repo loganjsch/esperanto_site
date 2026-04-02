@@ -15,20 +15,25 @@ connecting a GitHub repo for policy GitOps, and triggering a live attestation fa
 
 ---
 
+The first step is to download the CLI
+link here --
+
+You can run the cli on a seperate operator machine, or the machine you plan to enroll as a baseline, but in either case, you will need to install 
+
 ## Step 1: Create a Policy Group
 
-In the Ratatouille UI, create a new **Policy Group**. Give it a name that identifies your fleet or environment.
+On your operator machine (again, this may be the machine you plan to create the baseline off of or plan to test) create a new **Policy Group** wit `rat init --groupname`. Give it a name that identifies your fleet or environment.
 
-When you create the group, a **baseline enrollment token** is generated automatically.
+When you create the group, a command including the **baseline enrollment token** is generated automatically.
 Copy it; you'll need it in Step 2.
 
-Tokens look like: `esp_b_xxxxxxxxxxxxxxxxxxxx`
+Command look like: `rat enroll esp_b_xxxxxxxxxxxxxxxxxxxx`
 
 ---
 
 ## Step 2: Enroll the Machine
 
-SSH into the target machine and run the install script:
+Either via SSH, ansible, or manunally, run the enroll command 
 
 ```bash
 curl -fsSL https://your-core-instance/install.sh | sudo bash -s -- \
@@ -38,12 +43,15 @@ curl -fsSL https://your-core-instance/install.sh | sudo bash -s -- \
   --baseline
 ```
 
-The install script will:
+`rat init --endpoint`
+Note: Since this is the trial mode, you will not have an associated ratatouille core endpoint associated with your deployment yet.
+
+This will:
 1. Install the Keylime Rust agent via apt
-2. Configure the agent with a unique UUID and registrar address via systemd environment
-3. Start the agent, which performs the TPM2 **activate-credential** ceremony with the Ratatouille registrar
+2. Configure the agent with a unique UUID and registrar address
+3. Start the agent, which performs the TPM2 **activate-credential** ceremony with the Keylime registrar
 4. Capture the full IMA measurement log from the running machine
-5. POST the baseline to Ratatouille Core, which generates and stores your runtime policy
+5. POST the baseline to Ratatouille Core, which generates and stores returns your runtime policy
 
 :::note
 The runtime policy is built from what the TPM **actually measured** (the IMA log), not re-hashed from disk.
@@ -51,6 +59,7 @@ This avoids TOCTOU races and captures everything that ran since boot.
 :::
 
 ---
+
 
 ## Step 3: Connect Your GitHub Repo
 
@@ -67,6 +76,15 @@ runtime/
 ```
 
 ---
+
+Take a pause here. Policy creation is important, and misconfiguring it can mean anything fromletting all executions occur or none.
+We recommend you read 'policies.md' for a more full understanding of what thesse policeis determine and how they work, but in short...
+
+You should configure your policy based on the context of the machine you are enrolling. For exmaple, if this is an attestation check for a fleet of IoT devices you are going to deploy to the field, you can build a more strict IMA policy becuase you know the bounds of what shoudl execute on device. 
+
+A long running server subject to constant updates and new taks is probably a better target to link Measured Boot and keep the Runtime IMA checks to a minimum, as predicting all runtime executionsn is near impossible. This way, you can still prove to a relying party that secure boot occured, the modules loaded during it are what you expect, and this modules have't changed since then.
+
+While not always possible, the golden pipelien would be to run `rat init` in a CI/CD controlled system, where your code changes get deployed to the device, and the craetion of a new policy is the final sttep in the CI/CD pipeline. 
 
 ## Step 4: Sign and Push a Policy
 
