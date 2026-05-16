@@ -146,7 +146,7 @@ The Ratatouille flow breakdown is as follows: You (the user) designates a Git re
 
 Every push to the repository is ingested by Ratatouille's webhook, which verifies the Cosign signature and distributes the new policy to the Keylime verifier for every device enrolled in the associated policy group. From that point on, every TPM quote and IMA log segment is evaluated against the updated policy.
 
-**What trust verdicts enable.** A `TRUSTED` result can gate audit evidence export, access control decisions, SPIFFE/SPIRE workload identity issuance, and secret provisioning. An `UNTRUSTED` result can execute revocation actions, shut down devices, or flag for investigation.
+**What trust verdicts enable.** A `TRUSTED` result can gate audit evidence export, access control decisions, SPIFFE/SPIRE workload identity issuance, and secret provisioning.
 
 
 ## Built on open standards

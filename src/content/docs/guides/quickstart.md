@@ -10,48 +10,54 @@ connecting a GitHub repo for policy GitOps, and triggering a live attestation fa
 
 **Prerequisites:**
 - A Linux machine with a TPM 2.0 (physical or vTPM)
-- Access to a running Ratatouille Core instance (contact [loganjsch@gmail.com](mailto:loganjsch@gmail.com) for access)
+- The Ratatouille CLI installed:
+  - **Debian/Ubuntu:** `curl -1sLf 'https://dl.cloudsmith.io/public/ratatouille/ratatouille/setup.deb.sh' | sudo bash && sudo apt install rat`
+  - **RHEL/Fedora:** `curl -1sLf 'https://dl.cloudsmith.io/public/ratatouille/ratatouille/setup.rpm.sh' | sudo bash && sudo dnf install rat`
+  - **pip:** `pip install ratatouille`
 - A GitHub account and repo for your runtime policy
 
 ---
 
-The first step is to download the CLI
-link here --
-
-You can run the cli on a seperate operator machine, or the machine you plan to enroll as a baseline, but in either case, you will need to install 
+:::note
+The CLI can be run from any machine — enrolled or not. However, the machine you intend to attest
+must have the Ratatouille CLI and agent installed on it. This guide assumes you are operating
+directly from the machine you want to enroll as the baseline. Parts of this flow (GitHub connection
+and Sigstore signing) require a browser, so if you are on a headless machine you may want to run
+those steps from a separate machine.
+:::
 
 ## Step 1: Create a Policy Group
 
-On your operator machine (again, this may be the machine you plan to create the baseline off of or plan to test) create a new **Policy Group** wit `rat init --groupname`. Give it a name that identifies your fleet or environment.
+Create a new **Policy Group** and enroll the current machine as the baseline in one step:
 
-When you create the group, a command including the **baseline enrollment token** is generated automatically.
-Copy it; you'll need it in Step 2.
+```bash
+rat init [fleet-name] --bootstrap
+```
 
-Command look like: `rat enroll esp_b_xxxxxxxxxxxxxxxxxxxx`
+Give the group a name that identifies your fleet or environment. The `--bootstrap` flag tells
+Ratatouille to treat the current machine as the baseline and automatically enroll it after
+the group is created.
+
+If you are operating from a separate operator machine and want to enroll a remote device
+as the baseline instead, omit `--bootstrap` and run the generated enroll command on the
+target device via SSH or Ansible:
+
+```bash
+rat enroll <token> --server https://demo.ratatouille.dev
+```
 
 ---
 
-## Step 2: Enroll the Machine
+## Step 2: Enroll the Baseline Machine
 
-Either via SSH, ansible, or manunally, run the enroll command 
+When `rat init --bootstrap` runs (or when you run `rat enroll` manually), the CLI:
 
-```bash
-curl -fsSL https://your-core-instance/install.sh | sudo bash -s -- \
-  --token "esp_b_xxxxxxxxxxxxxxxxxxxx" \
-  --registrar "10.128.0.4" \
-  --core-url "http://10.128.0.4:8001" \
-  --baseline
-```
-
-`rat init --endpoint`
-Note: Since this is the trial mode, you will not have an associated ratatouille core endpoint associated with your deployment yet.
-
-This will:
-1. Install the Keylime Rust agent via apt
-2. Configure the agent with a unique UUID and registrar address
-3. Start the agent, which performs the TPM2 **activate-credential** ceremony with the Keylime registrar
-4. Capture the full IMA measurement log from the running machine
-5. POST the baseline to Ratatouille Core, which generates and stores returns your runtime policy
+1. Validates the enrollment token against Ratatouille Core
+2. Installs the Keylime Rust agent
+3. Configures the agent with a unique UUID and server addresses
+4. Starts the agent, which performs the TPM 2.0 **activate-credential** ceremony with the Keylime registrar
+5. Captures the full IMA measurement log from the running machine
+6. POSTs the baseline to Ratatouille Core, which generates your runtime policy draft
 
 :::note
 The runtime policy is built from what the TPM **actually measured** (the IMA log), not re-hashed from disk.
@@ -60,12 +66,13 @@ This avoids TOCTOU races and captures everything that ran since boot.
 
 ---
 
-
 ## Step 3: Connect Your GitHub Repo
 
-1. In the Ratatouille UI, click **Connect GitHub** on your Policy Group
-2. Install the Ratatouille GitHub App on your policy repository
-3. Ratatouille will automatically detect the repo and link it to your group
+After enrollment, the CLI will prompt you to connect a GitHub repository to your Policy Group.
+
+1. Enter your repository URL when prompted
+2. Install the Ratatouille GitHub App on that repository
+3. Ratatouille will automatically link the repo to your group
 
 Your repo should have this structure:
 
@@ -77,78 +84,96 @@ runtime/
 
 ---
 
-Take a pause here. Policy creation is important, and misconfiguring it can mean anything fromletting all executions occur or none.
-We recommend you read 'policies.md' for a more full understanding of what thesse policeis determine and how they work, but in short...
-
-You should configure your policy based on the context of the machine you are enrolling. For exmaple, if this is an attestation check for a fleet of IoT devices you are going to deploy to the field, you can build a more strict IMA policy becuase you know the bounds of what shoudl execute on device. 
-
-A long running server subject to constant updates and new taks is probably a better target to link Measured Boot and keep the Runtime IMA checks to a minimum, as predicting all runtime executionsn is near impossible. This way, you can still prove to a relying party that secure boot occured, the modules loaded during it are what you expect, and this modules have't changed since then.
-
-While not always possible, the golden pipelien would be to run `rat init` in a CI/CD controlled system, where your code changes get deployed to the device, and the craetion of a new policy is the final sttep in the CI/CD pipeline. 
-
 ## Step 4: Sign and Push a Policy
 
-Generate a runtime policy (from an IMA log baseline) and sign it with cosign:
+The CLI saves the generated policy draft to a file. Review it before signing — see the
+[policy reference](/reference/policies) for details on what the fields control and how
+to tune the policy for your environment.
+
+Sign the policy with `rat sign`:
 
 ```bash
-# Sign the policy file
-cosign sign-blob runtime/runtime_policy.json \
-  --bundle runtime/artifact.sigstore.json \
-  --identity-token $(gcloud auth print-identity-token)
+rat sign runtime/runtime_policy.json
+```
 
-# Commit and push
+This opens a browser for Sigstore keyless signing and writes the bundle to
+`runtime/artifact.sigstore.json` alongside the policy file.
+
+Then commit and push:
+
+```bash
 git add runtime/
-git commit -m "policy: update runtime_policy_v2"
+git commit -m "policy: initial baseline"
 git push
 ```
 
 When the push lands on `main`, Ratatouille's GitHub webhook:
 1. Verifies the HMAC-SHA256 webhook signature
-2. Fetches the policy and Sigstore bundle from the commit SHA via GitHub API
+2. Fetches the policy and Sigstore bundle from the commit SHA via the GitHub API
 3. Verifies the Sigstore bundle against the Rekor transparency log
 4. Stores the verified policy in the database
-5. Fans out `keylime_tenant -c add/update` to all enrolled agents in the group
+5. Fans out `keylime_tenant -c update` to all enrolled agents in the group
 
 :::caution
-Ratatouille only accepts policies signed by authorized identities. If the Sigstore verification
-fails or the signer doesn't match your configured policy, the push is rejected and no policy update occurs.
+Ratatouille only accepts policies signed by authorized identities. If Sigstore verification
+fails or the signer does not match your configured policy, the push is rejected and no policy update occurs.
 :::
 
 ---
 
 ## Step 5: Watch Live Attestation
 
-In the Ratatouille UI, your agent should show **TRUSTED** status with a green indicator.
-
-The Keylime verifier polls the agent every ~10 seconds. Each cycle it requests a fresh TPM quote signed by the AIK, checks PCR values against expected state, and verifies every IMA log entry against your runtime policy.
-
----
-
-## Step 6: Trigger an Attestation Failure (optional demo)
-
-Shell scripts don't trigger IMA measurements. You need a compiled ELF binary.
-This is the cleanest way to demonstrate the system catching unauthorized execution:
-
 ```bash
-# On the attested machine:
-cat > /tmp/evil.c << 'EOF'
-#include <stdio.h>
-int main() { printf("unauthorized binary\n"); return 0; }
-EOF
-
-gcc /tmp/evil.c -o /tmp/evil_binary
-/tmp/evil_binary
+rat status
 ```
 
-Within ~10 seconds, the Ratatouille verifier detects the new IMA entry (`/tmp/evil_binary`),
-finds it absent from the runtime policy, and flips the agent status to **FAILED**.
+This should show **TRUSTED** for your fleet (currently just this machine).
 
-:::tip
-Alternatively: `cp /bin/ls /tmp/evil_ls && /tmp/evil_ls` (same effect without needing gcc).
-:::
+The Keylime verifier polls the agent every ~10 seconds. Each cycle it requests a fresh TPM quote
+signed by the AIK, checks PCR values against expected state, and verifies every IMA log entry
+against your runtime policy.
 
 ---
 
-## Next steps
+## What to do next
 
-The [Use Cases](/usecases) page covers how different teams apply Ratatouille across government, IoT, and cloud environments. The [Runtime Policies reference](/reference/policies) documents policy structure and the full update workflow. The [RATS Framework overview](/reference/rats) explains the standards underpinning the system.
+:::caution
+The Ratatouille core you are connected to is a shared demo system. Do not use it for production
+deployments. Run `rat upgrade` when you are ready for a dedicated instance.
+:::
+
+### Trigger an Attestation Failure (optional demo)
+
+The simplest way to demonstrate the system catching unauthorized execution — no compiler needed:
+
+```bash
+cp /bin/ls /tmp/evil_ls
+/tmp/evil_ls
+```
+
+Within ~10 seconds, the Ratatouille verifier detects the new IMA entry (`/tmp/evil_ls`),
+finds it absent from the runtime policy, and flips the agent status to **FAILED**.
+
+---
+
+### Enroll more devices
+
+```bash
+rat enroll <token>
+```
+
+---
+
+### Generate cryptographic evidence
+
+```bash
+rat evidence <hostname>
+```
+
+---
+
+### Get a dedicated Ratatouille deployment
+
+```bash
+rat upgrade
+```

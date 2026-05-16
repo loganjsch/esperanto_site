@@ -69,13 +69,35 @@ When a machine enrolls with the `--baseline` flag, Ratatouille:
 
 ---
 
+## Choosing the right policy strictness
+
+Policy configuration should match the operational context of the machine being attested.
+
+**Tightly bounded devices** — IoT devices, field appliances, embedded controllers — are well-suited
+for strict IMA policies. The set of binaries that should ever execute is small and predictable.
+A tight policy here maximizes the value of attestation: any unexpected execution is immediately
+caught.
+
+**Long-running servers** subject to routine updates and unpredictable workloads are harder targets
+for strict IMA policies, since predicting every binary that will execute is impractical.
+For these machines, consider prioritizing Measured Boot (PCR 7 + PCR 10 at boot time) and
+keeping runtime IMA policy checks at a minimum. You can still prove to a relying party that
+Secure Boot occurred, that the modules loaded during boot are what you expect, and that those
+modules haven't changed since. Layer in broader IMA coverage as the workload stabilizes.
+
+**The golden pipeline** — where possible — is to run `rat init` as the final step in a
+CI/CD pipeline after known-good code is deployed to a device, and have the CI system sign
+and push the new policy automatically. This ties policy changes directly to auditable code changes.
+
+---
+
 ## GitOps policy update workflow
 
 Runtime policies live in a Git repository. The update workflow is:
 
 ```
 1. Edit runtime_policy.json
-2. cosign sign-blob runtime_policy.json --bundle artifact.sigstore.json
+2. rat sign runtime/runtime_policy.json
 3. git add runtime/ && git commit -m "policy: v5" && git push
 ```
 
@@ -90,14 +112,14 @@ On push, Ratatouille's GitHub webhook receives the event and fetches the policy 
 Ratatouille uses **keyless** Sigstore signing, with no long-lived signing keys to manage.
 
 ```bash
-cosign sign-blob runtime/runtime_policy.json \
-  --bundle runtime/artifact.sigstore.json \
-  --identity-token $(gcloud auth print-identity-token)
+rat sign runtime/runtime_policy.json
 ```
 
-The signer authenticates via OIDC (Google, GitHub, Microsoft). Sigstore issues a short-lived
-certificate bound to the authenticated identity (email / workload identity). The certificate
-and signature are logged to the **Rekor** public transparency ledger, which is immutable and auditable.
+`rat sign` is a wrapper around the Sigstore Python library (installed with Ratatouille —
+no separate tooling required). The signer authenticates via OIDC (Google, GitHub, Microsoft).
+Sigstore issues a short-lived certificate bound to the authenticated identity (email / workload
+identity). The certificate and signature are logged to the **Rekor** public transparency ledger,
+which is immutable and auditable.
 
 The bundle (`artifact.sigstore.json`) contains everything needed to verify the signature offline: the signature itself, the signing certificate, and the Rekor transparency log entry with inclusion proof.
 

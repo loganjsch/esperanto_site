@@ -229,7 +229,8 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       border-radius: var(--r); padding: 14px 20px; width: 100%;
     }
     .install-dollar { font-family: var(--mono); font-size: 0.9rem; color: var(--text-muted); user-select: none; }
-    .install-cmd    { font-family: var(--mono); font-size: 0.9rem; color: var(--text); flex: 1; text-align: left; }
+    .install-cmd    { font-family: var(--mono); font-size: 0.9rem; color: var(--text); flex: 1; text-align: left; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+    .install-cmd::-webkit-scrollbar { display: none; }
     .install-copy {
       background: none; border: none; cursor: pointer; padding: 2px;
       color: var(--text-muted); transition: color .15s; line-height: 1; flex-shrink: 0;
@@ -502,17 +503,16 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
 
     <div class="install-block">
       <div class="install-pm">
-        <button class="install-pm-btn active" data-cmd="brew install ratatouille" data-os="macos">macOS</button>
-        <button class="install-pm-btn" data-cmd="pip install ratatouille" data-os="python">Python</button>
-        <button class="install-pm-btn" data-cmd="apt install ratatouille" data-os="linux">Linux</button>
+        <button class="install-pm-btn active" data-cmd="" data-os="linux">Linux</button>
+        <button class="install-pm-btn" data-cmd="pip install ratatouille" data-os="python">pip</button>
       </div>
       <div class="install-distro" id="install-distro">
-        <button class="install-distro-btn active" data-cmd="apt install ratatouille">Ubuntu / Debian</button>
-        <button class="install-distro-btn" data-cmd="dnf install ratatouille">Fedora / RHEL</button>
+        <button class="install-distro-btn active" data-cmd="curl -1sLf &#39;https://dl.cloudsmith.io/public/ratatouille/ratatouille/setup.deb.sh&#39; | sudo bash &amp;&amp; sudo apt install rat">Ubuntu / Debian</button>
+        <button class="install-distro-btn" data-cmd="curl -1sLf &#39;https://dl.cloudsmith.io/public/ratatouille/ratatouille/setup.rpm.sh&#39; | sudo bash &amp;&amp; sudo dnf install rat">Fedora / RHEL</button>
       </div>
       <div class="install-shell">
         <span class="install-dollar">$</span>
-        <span class="install-cmd" id="install-cmd">brew install ratatouille</span>
+        <span class="install-cmd" id="install-cmd">curl -1sLf 'https://dl.cloudsmith.io/public/ratatouille/ratatouille/setup.deb.sh' | sudo bash && sudo apt install rat</span>
         <button class="install-copy" id="install-copy" title="Copy">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1 1 0 0 1 1-1h8"/></svg>
         </button>
@@ -870,13 +870,16 @@ document.querySelectorAll('.install-pm-btn').forEach(btn => {
     if (btn.dataset.os === 'linux') {
       distro.classList.add('visible');
       const active = distro.querySelector('.install-distro-btn.active');
-      document.getElementById('install-cmd').textContent = active ? active.dataset.cmd : btn.dataset.cmd;
+      document.getElementById('install-cmd').textContent = active ? active.dataset.cmd : '';
     } else {
       distro.classList.remove('visible');
       document.getElementById('install-cmd').textContent = btn.dataset.cmd;
     }
   });
 });
+
+// Show distro sub-buttons by default since Linux is the default tab
+document.getElementById('install-distro').classList.add('visible');
 
 document.querySelectorAll('.install-distro-btn').forEach(btn => {
   btn.addEventListener('click', () => {
