@@ -40,6 +40,25 @@ Attestation is not a guarantee of application security. An approved, attested bi
 
 ---
 
+## How the agent proves itself, every session
+
+The hardware chain establishes that *a* TPM exists and that an Attestation Key (AK) is registered for the device. But how does the verifier know that the connection it's accepting *right now* is from the agent whose AK was enrolled, and not from someone who copied the AK public key off the wire?
+
+Keylime's push model uses **Proof of Possession (PoP)** on every session:
+
+1. The agent opens a session: `POST /v3.0/sessions`
+2. The verifier responds with a fresh random challenge nonce
+3. The agent asks its TPM to run `TPM2_Certify` with the AK as both the object being certified and the signing key, using the challenge as `qualifyingData`. This produces a signed assertion that proves possession of the AK private key inside the TPM at this moment
+4. The agent sends the signed assertion back: `PATCH /v3.0/sessions/{sid}`
+5. The verifier checks the signature against the AK public key it has on file from registrar enrollment, and confirms the nonce matches the one it issued
+6. The verifier returns a short-lived bearer token (~15 minutes)
+
+Subsequent attestation pushes carry this bearer token in `Authorization: Bearer ...`. When it expires, the agent opens a new session. The AK private key never leaves the TPM, so an attacker with root on the agent host cannot impersonate the agent from elsewhere — they would have to physically remove the TPM.
+
+This replaces an older Keylime model that authenticated agents via mTLS client certificates. Those certs lived on the agent's filesystem and, if exfiltrated, granted admin-level access to the verifier. PoP eliminates both the filesystem secret and the over-broad authorization.
+
+---
+
 ## The trust chain root: TPM manufacturer
 
 The chain starts at the TPM manufacturer (Infineon, STMicroelectronics, Nuvoton, etc.).

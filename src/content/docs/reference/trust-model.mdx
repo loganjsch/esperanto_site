@@ -125,9 +125,9 @@ Ratatouille's trust model is built from two independent chains that converge at 
 
 The hardware chain establishes that the machine presenting evidence is the specific hardware that enrolled.
 
-The **TPM Manufacturer** burns an Endorsement Key (EK) into the silicon at manufacture time and signs an EK certificate with their CA. This certificate is the anchor — it cannot be faked without breaking RSA. During enrollment, Keylime's registrar verifies this certificate against the manufacturer's public CA, then establishes an **Attestation Identity Key (AIK)** — a separate key the TPM uses to sign quotes, so the EK is never directly exposed.
+The **TPM Manufacturer** burns an Endorsement Key (EK) into the silicon at manufacture time and signs an EK certificate with their CA. This certificate is the anchor — it cannot be faked without breaking RSA. During enrollment, Keylime's registrar verifies this certificate against the manufacturer's public CA, then establishes an **Attestation Key (AK)** — a separate key the TPM uses to sign quotes, so the EK is never directly exposed.
 
-On every polling cycle (~10 seconds), the verifier sends a fresh nonce and requests a **TPM Quote**: a hardware-signed snapshot of the PCR values at that moment, bound to that nonce. A quote without the nonce is a replay; a quote with the wrong PCRs is a tampered machine. PCR[7] captures the Secure Boot state at boot; PCR[10] is extended by IMA on every binary load since boot.
+On every push cycle (~10 seconds), the agent requests a fresh **TPM Quote** from its local TPM — a hardware-signed snapshot of the PCR values at that moment, bound to a nonce supplied by the verifier when the agent's session was opened. The agent then pushes the quote and the new IMA log entries to the verifier over an outbound TLS connection. A quote without a matching nonce is a replay; a quote with the wrong PCRs is a tampered machine. PCR[7] captures the Secure Boot state at boot; PCR[10] is extended by IMA on every binary load since boot.
 
 The **IMA log** is the detailed record: every ELF binary, kernel module, and shared library that executed, with its SHA-256 hash. The log hash-extends into PCR[10], so any tampering with the log breaks the PCR.
 
@@ -145,10 +145,10 @@ On a `git push`, Ratatouille's webhook handler fetches the bundle, re-verifies t
 
 ## Convergence
 
-The verifier holds both chains simultaneously. On each cycle it checks:
+The verifier holds both chains simultaneously. On each pushed attestation it checks:
 
-1. The TPM quote is signed by the registered AIK for this device
-2. The nonce in the quote matches the one it sent (freshness)
+1. The TPM quote is signed by the registered Attestation Key (AK) for this device
+2. The nonce in the quote matches the one issued for this session (freshness)
 3. PCR[10] in the quote matches what the IMA log hash-extends to (log integrity)
 4. Every IMA log entry's hash appears in the active signed policy (no unauthorized binaries)
 5. PCR[7] matches the expected Secure Boot state (boot integrity)

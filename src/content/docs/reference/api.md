@@ -73,18 +73,21 @@ This is the same data the `rat evidence` command displays.
 
 ### `POST /agents/{agent_id}/sync-status`
 
-Query the Keylime verifier for an agent's current attestation state and update the Ratatouille database. Called periodically by the system; also callable manually to force a status refresh.
+Query the Keylime verifier for an agent's current attestation state and update the Ratatouille database. Called periodically (every ~30 seconds) by a background poll on Ratatouille Core; also callable manually to force a status refresh.
 
 **Response:**
 ```json
 {
   "agent_id": "a1b2c3d4-...",
-  "operational_state": 7,
+  "attestation_status": "PASS",
+  "operational_state": 3,
   "status": "active",
   "attestation_count": 8640,
-  "last_received_quote": "2025-11-10T14:32:00Z"
+  "last_successful_attestation": "2025-11-10T14:32:00Z"
 }
 ```
+
+`attestation_status` (`PASS` / `FAIL` / `PENDING`) is the push-model status field and the primary signal Ratatouille uses to derive `status` (`active` / `failed` / `provisioning`). `operational_state` is retained for backward compatibility with the legacy pull-model API.
 
 ---
 
@@ -105,8 +108,8 @@ Called by the install script on the agent device during standard (non-baseline) 
 ```json
 {
   "status": "success",
-  "verifier_ip": "10.128.0.4",
-  "verifier_port": 8881
+  "verifier_ip": "verifier.your-core-instance.example",
+  "verifier_port": 443
 }
 ```
 
@@ -190,7 +193,7 @@ Generate a one-time baseline enrollment token. Creates the policy group if it do
 {
   "token": "esp_b_...",
   "expires_at": "2025-11-11T14:00:00Z",
-  "command": "rat enroll esp_b_... --server https://your-core-instance"
+  "command": "rat enroll esp_b_... --server https://your-core-instance.example"
 }
 ```
 
@@ -224,13 +227,15 @@ Validate a token and return the configuration the install script needs. Called b
 **Response:**
 ```json
 {
-  "registrar_ip": "10.128.0.4",
-  "verifier_ip": "10.128.0.4",
-  "core_url": "http://10.128.0.4:8001",
+  "registrar_ip": "registrar.your-core-instance.example",
+  "verifier_ip": "verifier.your-core-instance.example",
+  "core_url": "https://your-core-instance.example",
   "is_baseline": true,
   "group_id": "prod-fleet"
 }
 ```
+
+Hostnames are returned (not raw IPs) so the install script can use publicly-trusted TLS certificates (LetsEncrypt) for connections to the registrar and verifier. All three endpoints default to port 443; the install script no longer needs to pass explicit ports.
 
 ---
 

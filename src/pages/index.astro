@@ -543,7 +543,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
       <div class="reveal">
         <h2>Attesting your machines shouldn't require a PhD.</h2>
         <p class="problem-lead" style="margin-top:1.4rem;font-size:0.95rem;">
-          Keylime, Linux IMA, and TPM 2.0 already solve hardware-rooted integrity verification for Linux. But deploying them means managing a registrar, a verifier, mTLS certificates, TPM quote schemas, IMA allowlists, and policy fan-out, none of which is operationally documented anywhere useful.
+          Keylime and Sigstore are powerful attestation tools for Linux when used with TPM 2.0, IETF RATS, and proper CI/CD workflows. But deploying them means managing a registrar, a verifier, TPM-backed agent authentication, TPM quote schemas, IMA allowlists, and policy fan-out — none of which is easy or documented anywhere useful.
         </p>
         <p class="problem-lead" style="margin-top:0.9rem;font-size:0.95rem;">
           Ratatouille handles all of it. Generate a policy from a known-good machine, push it to Git, and every enrolled machine is continuously attested against it.
@@ -702,7 +702,7 @@ const BUILDING = `<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 2
           <div class="step-num">05</div>
           <h3>Export</h3>
           <p>Pull a signed evidence package at any time in a format any auditor can verify independently.</p>
-          <div class="step-detail">ratatouille evidence export --machine &lt;id&gt;</div>
+          <div class="step-detail">rat evidence &lt;hostname&gt; --export</div>
         </div>
       </div>
     </div>

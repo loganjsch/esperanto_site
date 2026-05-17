@@ -142,12 +142,26 @@ Ratatouille targets **Linux machines with TPM 2.0**: physical servers, cloud VMs
 
 ---
 
-The Ratatouille flow breakdown is as follows: You (the user) designates a Git repository to store runtime policies and their history. When you run `rat init-baseline`, Ratatouille captures the IMA log from your baseline machine and generates a Keylime allowlist. The Keylime allowlist is the set of file hashes permitted to appear in future IMA log entries. You sign that policy with Cosign and push it to the repository. The signature is recorded in the Rekor transparency log at the same time, creating a permanent, attributable record of who approved this policy and when.
+The Ratatouille flow breakdown is as follows: You (the user) designates a Git repository to store runtime policies and their history. When you run `rat init <fleet> --bootstrap`, Ratatouille captures the IMA log from your baseline machine and generates a Keylime allowlist. The Keylime allowlist is the set of file hashes permitted to appear in future IMA log entries. You sign that policy with Cosign and push it to the repository. The signature is recorded in the Rekor transparency log at the same time, creating a permanent, attributable record of who approved this policy and when.
 
 Every push to the repository is ingested by Ratatouille's webhook, which verifies the Cosign signature and distributes the new policy to the Keylime verifier for every device enrolled in the associated policy group. From that point on, every TPM quote and IMA log segment is evaluated against the updated policy.
 
 **What trust verdicts enable.** A `TRUSTED` result can gate audit evidence export, access control decisions, SPIFFE/SPIRE workload identity issuance, and secret provisioning.
 
+
+## Network architecture: agent never opens a port
+
+Ratatouille uses Keylime's **push model**. The agent on every attested machine makes outbound HTTPS connections to three endpoints — registrar, verifier, and Ratatouille Core — and never accepts inbound connections. This means:
+
+- **No firewall changes** on agent devices. They make outbound HTTPS like any other client.
+- **No NAT punching** or VPN setup for agents behind restrictive network boundaries (corporate firewalls, residential ISPs, mobile carriers).
+- **No inbound attack surface** on the attested machine — the most common kind of network exposure isn't even present.
+
+This is especially valuable for edge and IoT deployments where the attested device may be behind CGN, on a private network, or otherwise unreachable from the verifier's vantage point.
+
+On the server side, the registrar, verifier, and Ratatouille Core run as separate processes. In the reference deployment they sit behind a Caddy reverse proxy that terminates LetsEncrypt TLS on three subdomains; agents see only the public HTTPS endpoints and authenticate per-session via TPM Proof of Possession (see [Trust & Attestation](/reference/trust)).
+
+---
 
 ## Built on open standards
 
@@ -174,11 +188,11 @@ You own the policies, the evidence, and the cryptographic chain. No lock-in. If 
 
 **What the baseline actually covers.** The TPM quote covers PCR 7 (UEFI Secure Boot state), which proves whether Secure Boot was enabled at boot and whether the boot chain matched a known-good state. IMA picks up after the kernel loads and its measurement policy activates, extending a hash into PCR 10 for every executable, kernel module, and shared library that runs. The Keylime allowlist covers both: it validates PCR 7 against the expected Secure Boot state and checks every IMA log entry against the set of hashes captured at baseline time.
 
-**The baseline limitation.** The allowlist is a snapshot of what ran on a specific machine between boot and the moment `rat init-baseline` was run. Any binary that had not yet executed at baseline time will cause an attestation failure the first time it runs — it appears in the IMA log but is absent from the allowlist.
+**The baseline limitation.** The allowlist is a snapshot of what ran on a specific machine between boot and the moment baseline enrollment was run. Any binary that had not yet executed at baseline time will cause an attestation failure the first time it runs — it appears in the IMA log but is absent from the allowlist.
 
 In practice, baseline capture should happen after the machine has fully settled: all expected daemons started, maintenance scripts run, and any binaries that would run during normal operation exercised at least once. This makes Ratatouille well-suited for immutable or appliance-style deployments (IoT devices, fixed-image VMs, purpose-built servers) where the software set is stable and bounded. For general-purpose servers that receive regular package updates, the baseline must be regenerated and re-signed after each update.
 
 
 ## Next steps
 
-The [Remote Attestation Primer](/ra_overview) covers the underlying concepts (TPMs, IMA, and the RATS framework) for readers who want to understand the mechanics. To get a machine enrolled, start with the [Quickstart Guide](/guides/quickstart). To see the full flow live, including a triggered attestation failure, go to the [Live Demo](/demo).
+The [Remote Attestation Primer](/ra_overview) covers the underlying concepts (TPMs, IMA, and the RATS framework) for readers who want to understand the mechanics. To get a machine enrolled, start with the [Quickstart Guide](/guides/quickstart).

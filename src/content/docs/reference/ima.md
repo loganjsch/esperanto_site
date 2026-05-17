@@ -46,13 +46,17 @@ For `BPRM_CHECK` (user-space executables) to be active, the kernel must be boote
 
 ## How Ratatouille uses IMA
 
-At enrollment, Ratatouille captures the IMA log from a known-good machine (the baseline) and generates a runtime policy: the set of file hashes that are allowed to appear in the IMA log. This policy is signed with Cosign and pushed to Git.
+At enrollment, Ratatouille captures the IMA log from a known-good machine (the baseline) and generates a runtime policy: the set of file hashes that are allowed to appear in the IMA log, plus a small list of [default exclude patterns](/reference/policies#default-excludes) for paths that are inherently non-deterministic (PyInstaller extraction dirs, apt transient files, etc.). The policy is signed with Cosign and pushed to Git.
 
-On every attestation cycle (~10 seconds), Keylime:
-1. Requests a fresh TPM quote covering PCR[10]
-2. Requests the new IMA log entries since the last cycle
-3. Verifies each new entry's hash appears in the active policy
-4. Verifies the log correctly extends into the quoted PCR[10]
+On every attestation cycle (~10 seconds), the agent:
+1. Asks its local TPM for a fresh quote covering PCR[10]
+2. Collects the new IMA log entries since its last cycle
+3. Pushes the quote and log to the Keylime verifier
+
+The verifier then:
+1. Verifies the quote signature against the agent's registered Attestation Key
+2. Verifies each new IMA entry's hash appears in the active policy
+3. Verifies the log correctly extends into the quoted PCR[10]
 
 Any binary that runs and wasn't in the baseline policy fails attestation immediately.
 

@@ -43,12 +43,6 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Demo',
-          items: [
-            { label: 'Demo Walkthrough', slug: 'demo' },
-          ],
-        },
-        {
           label: 'Reference',
           items: [
             { label: 'CLI', slug: 'reference/cli' },

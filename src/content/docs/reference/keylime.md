@@ -17,13 +17,15 @@ Keylime has three components. The **agent** runs on every device being attested.
 
 The **registrar** is a central service that holds the enrolled agent inventory and their AIK (Attestation Identity Key) certificates. When an agent enrolls, the registrar verifies its EK certificate against the TPM manufacturer's CA, establishes the AIK, and records the device.
 
-The **verifier** continuously polls enrolled agents — by default every ~10 seconds — requesting a fresh TPM quote and IMA log segment. It appraises the quote signature, PCR values, and IMA log entries against the active policy for that agent. Ratatouille's verifier adapter wraps Keylime's verifier API to pull attestation results and surface them in the dashboard and API.
+The **verifier** receives attestations pushed by enrolled agents — by default every ~10 seconds — each containing a fresh TPM quote and the new IMA log entries since the last cycle. It appraises the quote signature, PCR values, and IMA log entries against the active policy for that agent. Ratatouille's verifier adapter wraps Keylime's verifier API to pull attestation results and surface them in the dashboard and API.
+
+Keylime's push model replaces the older pull design in which the verifier reached into agents over the network. With the push model, agents make only outbound connections, never opening an inbound port — a meaningful security and deployability win for edge and IoT fleets.
 
 ---
 
 ## What Keylime verifies
 
-On each polling cycle, Keylime verifies:
+On each pushed attestation, Keylime verifies:
 
 - The TPM quote is signed by the agent's AIK (proving it came from a registered TPM)
 - The quote includes the requested nonce (proving freshness — not a replay)
@@ -40,11 +42,12 @@ If any check fails, the agent's status is set to `FAILED` and Ratatouille surfac
 Ratatouille treats Keylime as infrastructure. When you enroll a device via `rat enroll`, the install script:
 
 1. Installs and starts the Keylime Rust agent
-2. The agent registers with Ratatouille's registrar
-3. Ratatouille's tenant controller (`keylime_tenant`) pushes the active runtime policy to the verifier for that agent
-4. The verifier begins continuous polling
+2. The agent registers with Ratatouille's registrar via the TPM activate-credential ceremony
+3. The agent opens a Proof-of-Possession (PoP) session with the verifier — proving control of the registered Attestation Key via a TPM-signed challenge — and receives a short-lived bearer token
+4. Ratatouille's tenant controller (`keylime_tenant`) pushes the active runtime policy to the verifier for that agent
+5. The agent begins pushing attestations to the verifier on the configured interval
 
-Policy updates (from a signed Git push) are fanned out via `keylime_tenant -c update` to the verifier, which picks up the new allowed-hash set on the next poll cycle.
+Policy updates (from a signed Git push) are fanned out via `keylime_tenant -c update` to the verifier, which evaluates the new allowed-hash set against subsequent pushed attestations.
 
 ---
 

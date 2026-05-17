@@ -127,11 +127,19 @@ fails or the signer does not match your configured policy, the push is rejected 
 rat status
 ```
 
-This should show **TRUSTED** for your fleet (currently just this machine).
+This should show **ACTIVE** for your fleet (currently just this machine).
 
-The Keylime verifier polls the agent every ~10 seconds. Each cycle it requests a fresh TPM quote
-signed by the AIK, checks PCR values against expected state, and verifies every IMA log entry
-against your runtime policy.
+Every ~10 seconds the agent constructs a fresh TPM quote signed by its Attestation Key (AK)
+and pushes it — along with the new IMA log entries since the last cycle — to the Keylime
+verifier. The agent never opens an inbound port; all attestation traffic is outbound from
+the agent. The verifier checks the quote signature, the PCR values, and every IMA log entry
+against your runtime policy, then stores the verdict.
+
+:::note
+`rat status` is updated by a 30-second background poll on the Ratatouille Core. A freshly
+enrolled agent may briefly show `PROVISIONING` before the first poll cycle reflects the
+verified attestation — give it ~30 seconds.
+:::
 
 ---
 

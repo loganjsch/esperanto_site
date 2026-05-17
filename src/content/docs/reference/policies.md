@@ -31,7 +31,13 @@ Ratatouille runtime policies follow the Keylime policy format:
       "b5e2a9f3c1d7e4b8a2c5f9e3d6b1a4c8f2e7d3b9a5c1e8f4d2b6a3c9f7e1b4d5"
     ]
   },
-  "excludes": [],
+  "excludes": [
+    "^/tmp/_MEI[A-Za-z0-9]+/.*",
+    "^/tmp/tmp\\.[A-Za-z0-9]+",
+    "^/var/cache/apt/.*",
+    "^/var/lib/apt/.*",
+    "^/var/lib/google-cloud-ops-agent/.*"
+  ],
   "keyrings": {},
   "ima": {
     "ignored_keyrings": [],
@@ -43,11 +49,33 @@ Ratatouille runtime policies follow the Keylime policy format:
 The `digests` map is a path → list of SHA256 hashes. Multiple hashes per path allow
 for version transitions (old and new binary both approved during a rollout window).
 
+The `excludes` array is a list of regex patterns. Any IMA log entry whose path matches an exclude pattern is **skipped during verification** — the file is not required to be in `digests`. This is a pragmatic escape hatch for files that legitimately appear under non-deterministic paths (random per-invocation extraction directories, log buffers with timestamped names, etc.). Excludes trade strictness for operability and should be used sparingly.
+
+---
+
+## Default excludes
+
+Ratatouille ships with a small default set of excludes for paths that are noisy on virtually any modern Linux system. They're applied to every baseline-generated policy:
+
+| Pattern | What it skips | Why |
+|---|---|---|
+| `^/tmp/_MEI[A-Za-z0-9]+/.*` | PyInstaller extraction directories | The `rat` CLI is itself a PyInstaller binary that extracts its embedded Python + libs to a random `/tmp/_MEI<rand>/` on every invocation. Without this exclude every `rat` run would fail attestation. |
+| `^/tmp/tmp\.[A-Za-z0-9]+` | `mktemp` outputs | apt and many shell scripts use mktemp for transient files. The path is random per invocation. |
+| `^/var/cache/apt/.*` | apt download cache | apt creates timestamped `pkgcache.bin.XXX` files. Unattended-upgrades touches these on a schedule. |
+| `^/var/lib/apt/.*` | apt state directory | Similar `.apt-acquire-privs-test.XXX` transient files. |
+| `^/var/lib/google-cloud-ops-agent/.*` | GCP ops agent buffers | Constant log buffer rotation with random names. Common on GCP-hosted demo deployments. |
+
+**Security implication**: anything an attacker writes into one of these paths would not be flagged by attestation. The `apt` binary itself (at `/usr/bin/apt`) is still verified — what's excluded is the random-named state files it creates, not the tools that create them.
+
+**Tuning excludes**: you can edit `excludes` directly in `runtime_policy.json`, sign, and push. Add patterns sparingly: every exclude is a hole in the attestation surface.
+
+---
+
 ---
 
 ## How the baseline policy is generated
 
-When a machine enrolls with the `--baseline` flag, Ratatouille:
+When a machine enrolls via `rat init <fleet> --bootstrap` (or `rat enroll` against a baseline-typed token), Ratatouille:
 
 1. Receives the full IMA ascii measurement log from the agent
 2. Calls Keylime's `create_policy.py` with the log as input

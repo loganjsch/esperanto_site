@@ -38,18 +38,23 @@ The configured URL is used by all subsequent commands. Stored at `~/.rat/config.
 ## rat init
 
 ```
-rat init
+rat init [fleet-name] [--bootstrap]
 ```
 
-Create a new fleet (policy group) and generate a baseline enrollment token. Prompts for a fleet name, then waits for the first agent to enroll.
+Create a new fleet (policy group) and generate a baseline enrollment token.
+
+| Flag | Description |
+|---|---|
+| `[fleet-name]` | Name for the new policy group. Prompted interactively if omitted. |
+| `--bootstrap` | Immediately enroll the **current machine** as the baseline reference device after creating the group. |
 
 **What it does:**
 1. Creates the policy group on the Ratatouille Core
 2. Generates a one-time baseline enrollment token (`esp_b_...`)
-3. Prints enrollment commands for three methods: `rat enroll`, Ansible, and cloud-init
-4. Polls until the first agent checks in, then confirms enrollment
+3. If `--bootstrap` is set, runs `rat enroll` locally to capture the baseline from the current machine
+4. Otherwise prints enrollment commands you can run on a separate target machine
 
-**Output includes enrollment commands for:**
+**Output (without `--bootstrap`) includes enrollment commands for:**
 
 ```bash
 # rat CLI (run on the target machine)
@@ -83,11 +88,11 @@ Enroll **this machine** into a fleet. Run on the agent device, not the operator 
 
 **What it does:**
 1. Validates the token against the Ratatouille Core
-2. Retrieves the Keylime registrar/verifier addresses and policy group assignment
+2. Retrieves the Keylime registrar/verifier hostnames and policy group assignment
 3. Runs the bundled install script (requires `sudo`)
 4. The install script installs the Keylime Rust agent, configures it, and initiates the TPM credential activation ceremony
 
-The Keylime agent must be reachable by the Ratatouille verifier over the network after enrollment.
+The agent operates in **push mode**: it makes outbound HTTPS connections to the registrar and verifier, and never opens an inbound port. This means no firewall changes, no NAT punching, and no inbound attack surface on the agent device — well-suited for edge and IoT deployments behind restrictive networks.
 
 ---
 
@@ -115,12 +120,17 @@ Show the current attestation status of all enrolled agents.
 
 **Example output:**
 ```
-  ━━ Fleet Status  http://localhost:8001
+  ━━ Fleet Status  https://demo.ratatouille.dev
 
-   ●  prod-node-01.fleet.internal   prod-fleet   ACTIVE     PCR[7]+[10]   12s ago
-   ●  prod-node-02.fleet.internal   prod-fleet   ACTIVE     PCR[7]+[10]   8s ago
-   ✗  edge-device-07.iot.internal   edge-fleet   FAILED     —             26m ago
+   ●  prod-node-01.fleet.internal   prod-fleet   ACTIVE         12s ago
+   ●  prod-node-02.fleet.internal   prod-fleet   ACTIVE         8s ago
+   ✗  edge-device-07.iot.internal   edge-fleet   FAILED         26m ago
 ```
+
+:::note
+Status is updated by a ~30-second background poll on Ratatouille Core. A newly enrolled
+agent may briefly appear as `PROVISIONING` before its first attestation has been polled.
+:::
 
 ---
 
