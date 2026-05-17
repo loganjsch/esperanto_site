@@ -150,17 +150,57 @@ The Ratatouille core you are connected to is a shared demo system. Do not use it
 deployments. Run `rat upgrade` when you are ready for a dedicated instance.
 :::
 
-### Trigger an Attestation Failure (optional demo)
+### Demonstrating an attestation failure (and recovering)
 
-The simplest way to demonstrate the system catching unauthorized execution — no compiler needed:
+The fastest way to see the full failure → detection → recovery loop. No compiler or extra tooling required.
+
+**Trigger:**
 
 ```bash
-cp /bin/ls /tmp/evil_ls
-/tmp/evil_ls
+cp /bin/ls /tmp/evil_ls && /tmp/evil_ls
 ```
 
-Within ~10 seconds, the Ratatouille verifier detects the new IMA entry (`/tmp/evil_ls`),
-finds it absent from the runtime policy, and flips the agent status to **FAILED**.
+`/tmp/evil_ls` is at a path no exclude pattern matches. IMA measures the file via `BPRM_CHECK` on exec, extends PCR[10], and appends an entry to the runtime log.
+
+**Verify the entry landed in IMA:**
+
+```bash
+sudo grep /tmp/evil_ls /sys/kernel/security/ima/ascii_runtime_measurements
+# 10  f0635a12...  ima-sig  sha256:cb30d69b24245bf2ecdc9e7f53bbad19159999970b6d82c0c00c7d32d9e37aa4  /tmp/evil_ls
+```
+
+Within ~10 seconds the agent pushes this entry to the verifier. The verifier checks `/tmp/evil_ls` against the policy's `digests` map, finds it absent, and marks the agent FAILED. Esperanto-Core's ~30-second background poll picks it up:
+
+```
+  ━━ Fleet Status  https://demo.ratatouille.dev
+
+       Agent                      Group         Status     Last seen
+ ─────────────────────────────────────────────────────────────────────
+ ✗     instance-20260405-221449   demo-fleet    FAILED     2s ago
+```
+
+**Recover by signing the new binary into the policy** (the legitimate-software-update path):
+
+```bash
+# Extract the file hash directly from the IMA log
+HASH=$(sudo awk -v p=/tmp/evil_ls '$5==p {sub(/^sha256:/,"",$4); print $4; exit}' \
+       /sys/kernel/security/ima/ascii_runtime_measurements)
+
+# Add it to the digests map under the file's path
+jq --arg h "$HASH" '.digests["/tmp/evil_ls"] = [$h]' \
+   runtime/runtime_policy.json > runtime/runtime_policy.json.new \
+&& mv runtime/runtime_policy.json.new runtime/runtime_policy.json
+
+# Re-sign and push
+rat sign runtime/runtime_policy.json
+git add runtime/ && git commit -m "policy: allow /tmp/evil_ls" && git push
+```
+
+The GitHub webhook fires → Sigstore signature verified → `keylime_tenant -c update` pushes the new policy to the verifier → next attestation passes → status flips back to ACTIVE within ~30 seconds.
+
+:::tip[The security property worth surfacing to stakeholders]
+Recovery required signing the policy update with an OIDC-authenticated identity, which is permanently recorded in Rekor. A compromised agent **cannot** allowlist its own activity — the policy lives in Git and only an authorized signer can change it.
+:::
 
 ---
 
@@ -185,3 +225,11 @@ rat evidence <hostname>
 ```bash
 rat upgrade
 ```
+
+---
+
+### Need something more bespoke?
+
+Air-gapped deployments, custom IMA policy generation, vTPM integration on platforms we haven't documented yet, regulated-environment onboarding — reach out and we'll build it with you.
+
+[logan@ratatouille.dev](mailto:logan@ratatouille.dev)
